@@ -155,6 +155,12 @@ async def get_user(user_id:int):
         return {'code':1,"message":"用户不存在"}
     return {"code":0,"message":"",'data':{'user':user}} 
 
+async def get_works(user_id:int):
+    r = db.get_works_by_user_id(user_id=user_id)
+    if r['code']!=0:
+        return r
+    works = r['data']['works']
+    return {"code":0,"message":"",'data':{'works':works}}    
 
 async def add_user(email:str,open_id:str,password:str):
    return db.insert_user(email=email,open_id=open_id,password=password)
@@ -175,4 +181,11 @@ async def del_bind(bind_id:str):
         return {'code':1,"message":"删除失败，未找到该用户"}
     return {'code':0,"message":"删除成功",'data':{"del_bind_users":del_bind_users}}
 
-
+async def del_work(work_id:int,user_id:int):
+    r = db.del_work(work_id=work_id,user_id=user_id)
+    if r['code']!=0:
+        return r
+    del_works = r["data"]['del_works']
+    if del_works==[]:
+        return {'code':1,"message":"删除失败，未找到该任务"}
+    return {'code':0,"message":"删除成功",'data':{"del_works":del_works}}

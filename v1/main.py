@@ -87,25 +87,39 @@ async def get_user(user_id: int, password: str):
 
 
 @app.get('/v1/add_work')
-async def add_work(user_id: int, password: str, bind_id: str, time_type: int, work_type: int, state: int, hour: int,minute:int, weektime: int, template_id: int):
+async def add_work(user_id: int, password: str, bind_id: str, time_type: int, work_type: int, state: int, hour: int, minute: int, weektime: int, template_id: int):
     r = await tool.check_user_password(user_id=user_id, password=password)
     if r['code'] != 0:
         return r
-
     max_work = r['data']['user']['max_work']
-    
     r = await tool.check_template_exist(template_id=template_id)
-    if r['code'] !=0:
+    if r['code'] != 0:
         return r
-
     r = await tool.check_work_number(user_id=user_id, max_work=max_work)
     if r['code'] != 0:
         return r
-
-    r = await tool.add_work(user_id=user_id,bind_id=bind_id,time_type=time_type,work_type=work_type,state=state,hour=hour,minute=minute,weektime=weektime,template_id=template_id)
-    if r['code']!=0:
+    r = await tool.add_work(user_id=user_id, bind_id=bind_id, time_type=time_type, work_type=work_type, state=state, hour=hour, minute=minute, weektime=weektime, template_id=template_id)
+    if r['code'] != 0:
         return r
-
     work_id = r['data']['work_id']
+    return {'code': 0, 'message': "任务添加成功", 'data': {'work_id': work_id}}
 
-    return {'code':0,'message':"任务添加成功",'data':{'work_id':work_id}}
+@app.get('/v1/del_work')
+async def del_work(user_id:int,password:str,work_id:int):
+    r = await tool.check_user_password(user_id=user_id, password=password)
+    if r['code'] != 0:
+        return r
+    r = await tool.del_work(work_id=work_id,user_id=user_id)
+    if r['code'] !=0:
+        return r
+    return {'code':0,'message':"删除任务成功"}
+
+@app.get('/v1/get_works')
+async def get_works(user_id:int,password:str):
+    r = await tool.check_user_password(user_id=user_id, password=password)
+    if r['code'] != 0:
+        return r
+    r = await tool.get_works(user_id=user_id)
+    if r['code'] !=0:
+        return r
+    return {'code':0,'message':"查询任务成功","data":r["data"]}
