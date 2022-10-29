@@ -3,7 +3,7 @@ from tinydb import TinyDB,Query
 
 user_db = TinyDB("users.db")
 bind_user_db = TinyDB("bind_users.db")
-User = Query()
+Querydb = Query()
 # Bind_User = Query()
 def insert_user(email:str,open_id:str,password:str):
     try:
@@ -22,14 +22,14 @@ def insert_bind_user(user_id:int,bind_id:str,bind_password:str,jwsession:str):
 
 def get_user_by_email(email:str):
     try:
-        user = user_db.get(User.email==email)
+        user = user_db.get(Querydb.email==email)
         return  {"code":0,"message":"db查询成功","data":{'user':user}}
     except Exception as e:
         return {"code":1,"message":"数据库查询出错"}
 
 def get_user_by_open_id(open_id:str):
     try:
-        user = user_db.get(User.open_id==open_id)
+        user = user_db.get(Querydb.open_id==open_id)
         return  {"code":0,"message":"db查询成功","data":{'user':user}}
     except Exception as e:
         return {"code":1,"message":"数据库查询出错"}
@@ -41,11 +41,17 @@ def get_user_by_user_id(user_id:int):
     except Exception as e:
         return {"code":1,"message":"数据库查询出错"}
 
-
 def get_bind_user_by_bind_id(bind_id:str):
     try:
         # bind_user = bind_user_db.get(Bind_User.bind_id == bind_id)
-        bind_user = bind_user_db.get(User.bind_id==bind_id)
-        return  {"code":0,"message":"db查询成功","data":{'user':bind_user}}
+        bind_user = bind_user_db.get(Querydb.bind_id==bind_id)
+        return  {"code":0,"message":"db查询成功","data":{'bind_user':bind_user}}
     except Exception as e:
         return {"code":1,"message":"数据库查询出错"}
+
+def get_bind_users_by_user_id(user_id):
+    try:
+        bind_users = bind_user_db.search(Querydb.user_id==user_id)
+        return {'code':0,"message":"db查询成功","data":{"bind_users":bind_users}}
+    except Exception as e:
+        return {'code':1,"message":"数据库查询出错"}

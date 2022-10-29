@@ -30,7 +30,7 @@ async def check_bind_user_exist(bind_id:str):
     r = db.get_bind_user_by_bind_id(bind_id=bind_id)
     if r['code']!=0:
         return r
-    if r['data']['user']!=None:
+    if r['data']['bind_user']!=None:
         return {'code':1,'message':"用户已存在"}
     return {'code':0,"message":""}
 
@@ -72,9 +72,9 @@ async def check_bind_number(user_id:int,max_bind:Union[int,None]):
         return r
     bind_count = r['data']['bind_count']
     if bind_count<max_bind:
-        return {'code':0}
+        return {'code':0,'message':""}
     else:
-        return {'code':1}
+        return {'code':1,"message":"绑定失败,超出绑定数量限制"}
 
 async def get_user_max_bind(user_id:int):
     r = db.get_user_by_user_id(user_id=user_id)
@@ -87,7 +87,14 @@ async def get_user_max_bind(user_id:int):
     
 
 async def get_user_bind_count(user_id:int):
-    pass
+    r = db.get_bind_users_by_user_id(user_id=user_id)
+    if r['code']!=0:
+        return r
+    bind_users:list = r['data']['bind_users']
+    if bind_users==[]:
+        return {"code":0,"message":"",'data':{'bind_count':0}} 
+    return {"code":0,"message":"",'data':{'bind_count':len(bind_users)}} 
+    
 
 async def add_user(email:str,open_id:str,password:str):
    return db.insert_user(email=email,open_id=open_id,password=password)

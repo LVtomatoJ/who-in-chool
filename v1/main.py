@@ -35,8 +35,10 @@ async def bind(user_id:int,password:str,bind_id:str,bind_password:str):
     r = await tool.check_bind_user_exist(bind_id=bind_id)
     if r['code']!=0:
         return r
-
     
+    r = await tool.check_bind_number(user_id=user_id,max_bind=max_bind)
+    if r['code']!=0:
+        return r
 
     r = await tool.check_bind_user_password(bind_id=bind_id,bind_password=bind_password)
     if r['code']!=0:
