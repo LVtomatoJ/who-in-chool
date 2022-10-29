@@ -1,6 +1,7 @@
 
 from tinydb import TinyDB,Query
 
+
 user_db = TinyDB("users.db")
 bind_user_db = TinyDB("bind_users.db")
 Querydb = Query()
@@ -55,3 +56,10 @@ def get_bind_users_by_user_id(user_id):
         return {'code':0,"message":"db查询成功","data":{"bind_users":bind_users}}
     except Exception as e:
         return {'code':1,"message":"数据库查询出错"}
+
+def del_bind_user(bind_id:str):
+    try:
+        del_bind_users = bind_user_db.remove(Querydb.bind_id==bind_id)
+        return {'code':0,"message":"db删除成功","data":{"del_bind_users":del_bind_users}}
+    except Exception as e:
+        return {"code":1,"message":"数据库删除出错"}

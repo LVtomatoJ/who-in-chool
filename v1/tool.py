@@ -101,3 +101,12 @@ async def add_user(email:str,open_id:str,password:str):
 
 async def add_bind_user(user_id:int,bind_id:str,bind_password:str,jwsession:str):
     return db.insert_bind_user(user_id=user_id,bind_id=bind_id,bind_password=bind_password,jwsession=jwsession)
+
+async def del_bind(bind_id:str):
+    r = db.del_bind_user(bind_id=bind_id)
+    if r['code']!=0:
+        return r
+    del_bind_users = r["data"]['del_bind_users']
+    if del_bind_users==[]:
+        return {'code':1,"message":"删除失败，未找到该用户"}
+    return {'code':0,"message":"删除成功",'data':{"del_bind_users":del_bind_users}}
