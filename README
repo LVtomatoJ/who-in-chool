@@ -1,0 +1,4 @@
+
+cd v1
+
+python3 -m uvicorn main:app --reload 
