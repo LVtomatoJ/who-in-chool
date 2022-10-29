@@ -2,15 +2,6 @@ from typing import Union
 import tinydbtool as db
 import nettool as net
 async def check_user_exist(email:Union[str,None],open_id:Union[str,None])->dict:
-    """通过数据库中是否有email和open_id判断是否已经存在该用户
-    
-    Args:
-        email (Union[str,None]): 邮箱
-        open_id (Union[str,None]): openid
-
-    Returns:
-        dict: 字典中code为1存在反之不存在 message为错误信息
-    """
     if email:
         r = db.get_user_by_email(email=email)
         if r['code']!=0:
@@ -84,6 +75,7 @@ async def get_user_max_bind(user_id:int):
     if user==None:
         return {'code':1,"message":"用户不存在"}
     return {"code":0,"message":"",'data':{'max_bind':r['data']['user']['max_bind']}} 
+    # r = await get_user(user_id=user_id)
     
 
 async def get_user_bind_count(user_id:int):
@@ -95,6 +87,22 @@ async def get_user_bind_count(user_id:int):
         return {"code":0,"message":"",'data':{'bind_count':0}} 
     return {"code":0,"message":"",'data':{'bind_count':len(bind_users)}} 
     
+async def get_user_binds(user_id:int):
+    r = db.get_bind_users_by_user_id(user_id=user_id)
+    if r['code']!=0:
+        return r
+    bind_users = r['data']['bind_users']
+    return r
+    
+async def get_user(user_id:int):
+    r = db.get_user_by_user_id(user_id=user_id)
+    if r['code']!=0:
+        return r
+    user = r['data']['user']
+    if user==None:
+        return {'code':1,"message":"用户不存在"}
+    return {"code":0,"message":"",'data':{'user':user}} 
+
 
 async def add_user(email:str,open_id:str,password:str):
    return db.insert_user(email=email,open_id=open_id,password=password)
@@ -110,3 +118,5 @@ async def del_bind(bind_id:str):
     if del_bind_users==[]:
         return {'code':1,"message":"删除失败，未找到该用户"}
     return {'code':0,"message":"删除成功",'data':{"del_bind_users":del_bind_users}}
+
+

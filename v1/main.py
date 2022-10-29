@@ -59,3 +59,24 @@ async def del_bind(user_id:int,password:str,bind_id):
     if r['code']!=0:
         return r
     return {"code":0,"message":"删除成功"}
+
+
+@app.get('/v1/get_binds')
+async def get_user_binds(user_id:int,password:str):
+    r = await tool.check_user_password(user_id=user_id,password=password)
+    if r['code']!=0:
+        return r
+    r = await tool.get_user_binds(user_id)
+    if r['code']!=0:
+        return r
+    return {'code':0,"message":"查询成功",'data':r['data']}
+
+@app.get('/v1/get_user')
+async def get_user(user_id:int,password:str):
+    r = await tool.check_user_password(user_id=user_id,password=password)
+    if r['code']!=0:
+        return r
+    r = await tool.get_user(user_id=user_id)
+    if r['code']!=0:
+        return r
+    return {'code':0,"message":"查询成功","data":r["data"]}
