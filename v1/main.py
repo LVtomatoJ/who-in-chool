@@ -134,3 +134,10 @@ async def get_works(user_id:int,password:str):
     if r['code'] !=0:
         return r
     return {'code':0,'message':"查询任务成功","data":r["data"]}
+
+@app.get('/test_work')
+async def test_work(work_id:int):
+    r = await tool.test_work(work_id=work_id)
+    if r['code'] !=0:
+        return r
+    return r

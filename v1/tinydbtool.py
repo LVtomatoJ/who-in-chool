@@ -1,4 +1,5 @@
 
+from typing import Union
 from tinydb import TinyDB,Query
 import traceback
 
@@ -10,6 +11,8 @@ Querydb = Query()
 # template_db.insert({"demo":"132"})
 # Bind_User = Query()
 # work_db.insert({"d":"1","user_id":1})
+
+
 
 def insert_user(email:str,open_id:str,password:str):
     try:
@@ -31,6 +34,14 @@ def insert_work(user_id:int,bind_id:str,time_type:int,work_type:int,state:int,ho
         return {"code":0,"message":"任务添加成功","data":{'work_id':work_id}}
     except Exception as e:
         return {"code":1,"message":"数据库添加出错"}
+
+def insert_template(work_type:int,data:dict,info:str):
+    try:
+        template_id = template_db.insert({'work_type':work_type,'data':data,'info':info})
+        return {'code':1,"message":"模板添加成功",'data':{'template_id':template_id}}
+    except Exception as e:
+        return {'code':1,"message":"数据库添加出错"}
+
 
 def get_user_by_email(email:str):
     try:
@@ -84,6 +95,17 @@ def get_works_by_user_id(user_id):
     except Exception as e:
         return {'code':1,"message":"数据库查询出错"}
 
+def get_work(work_id):
+    try:
+        work = work_db.get(doc_id=work_id)
+        return {'code':0,"message":"db查询成功","data":{"work":work}}
+    except Exception as e:
+        return {'code':1,"message":"数据库查询出错"}
+
+
+
+
+
 def del_bind_user(bind_id:str):
     try:
         del_bind_users = bind_user_db.remove(Querydb.bind_id==bind_id)
@@ -99,3 +121,6 @@ def del_work(work_id:int,user_id:int):
         return {"code":1,"message":"数据库为空"}
     except Exception as e:
         return {"code":1,"message":"数据库删除出错"}
+
+    
+

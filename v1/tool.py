@@ -1,6 +1,9 @@
 from typing import Union
 import tinydbtool as db
 import nettool as net
+from requests.cookies import RequestsCookieJar
+
+
 async def check_user_exist(email:Union[str,None],open_id:Union[str,None])->dict:
     if email:
         r = db.get_user_by_email(email=email)
@@ -29,9 +32,10 @@ async def check_bind_user_exist(bind_id:str):
     r = db.get_bind_user_by_bind_id(bind_id=bind_id)
     if r['code']!=0:
         return r
-    if r['data']['bind_user']!=None:
-        return {'code':1,'message':"用户已存在"}
-    return {'code':0,"message":""}
+    bind_user = r['data']['bind_user']
+    if bind_user!=None:
+        return {'code':1,'message':"绑定用户存在",'data':{'bind_user':bind_user}}
+    return {'code':0,"message":"绑定用户不存在"}
 
 async def check_user_password(user_id:int,password:str)->dict:
     r = db.get_user_by_user_id(user_id=user_id)
@@ -189,3 +193,58 @@ async def del_work(work_id:int,user_id:int):
     if del_works==[]:
         return {'code':1,"message":"删除失败，未找到该任务"}
     return {'code':0,"message":"删除成功",'data':{"del_works":del_works}}
+
+
+async def jwsession_cookie_str_to_jar(jwsession:str)->RequestsCookieJar:
+    jar = RequestsCookieJar()
+    jar.set("JWSESSION",jwsession)
+    return jar
+
+
+async def test_work(work_id:int):
+    r = db.get_work(work_id=work_id)
+    if r['code']!=0:
+        return r
+    work = r['data']['work']
+    if work==None:
+        return {'code':1,'message':"任务不存在"}
+    if work['state']!=0:
+        return {'code':1,"message":"任务状态不正常"}
+    work_type = work['work_type']
+    r = await check_bind_user_exist(bind_id=work['bind_id'])
+    if r['code']==0:
+        return {'code':1,"message":"绑定用户不存在"}
+    bind_user = r['data']['bind_user']
+    if bind_user['state']!=0:
+        return {'code':1,"message":"绑定用户状态异常"}
+    jwsession = bind_user["jwsession"]
+    cookies:RequestsCookieJar = await jwsession_cookie_str_to_jar(jwsession=jwsession)
+    template_id = work['template_id']
+    r = db.get_template_by_id(template_id=template_id)
+    if r['code']!=0:
+        return r
+    template = r['data']['template']
+    template_work_type = template['work_type']
+    if template_work_type!=work_type:
+        return {"code":1,"message":"任务与模板不匹配"}
+    data = template['data']
+    if work_type==1:
+        r = await do_heat(cookies=cookies,data=data)
+        if r['code']!=0:
+            return r
+        return r
+
+async def do_heat(cookies:RequestsCookieJar,data:dict):
+    r = net.doHeat(cookies=cookies,data=data)
+    if r['code']!=0:
+        return r
+    return_code = r['data']['code']
+    if return_code == 1:
+        return {'code':1,"message":"日检日报不在规定时间"}
+    elif return_code == 7:
+        return {'code':1,"message":"日检日报模板出错"}
+    elif return_code == -10:
+        return {'code':1,"message":"绑定用户过期"}
+    elif not return_code == 0:
+        return {'code':1,"message":"出现其他错误"}
+    return {'code':0,"message":"日检日报打卡成功"}
