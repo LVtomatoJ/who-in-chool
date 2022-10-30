@@ -4,9 +4,23 @@ from fastapi import FastAPI, status, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
 import tool
 app = FastAPI()
+
+
+origins = [
+    "http://localhost:3000",
+    "localhost:3000"
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 
 @app.exception_handler(RequestValidationError)
@@ -17,7 +31,6 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         content=jsonable_encoder({"code": 1, "message": "提交参数错误"})
     )
 
-
 @app.get("/v1/reg")
 async def reg(email: EmailStr, open_id: str, password: str):
     r = await tool.check_user_exist(email=email, open_id=open_id)
@@ -27,7 +40,6 @@ async def reg(email: EmailStr, open_id: str, password: str):
     if r['code'] == 1:
         return r
     return r
-
 
 @app.get("/v1/bind")
 async def bind(user_id: int, password: str, bind_id: str, bind_password: str):
@@ -62,7 +74,6 @@ async def del_bind(user_id: int, password: str, bind_id):
     if r['code'] != 0:
         return r
     return {"code": 0, "message": "删除成功"}
-
 
 @app.get('/v1/get_binds')
 async def get_user_binds(user_id: int, password: str):
