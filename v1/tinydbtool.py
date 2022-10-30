@@ -122,5 +122,9 @@ def del_work(work_id:int,user_id:int):
     except Exception as e:
         return {"code":1,"message":"数据库删除出错"}
 
-    
-
+def insert_work_log(user_id:int,bind_id:str,work_id:int,state:int,message:str):
+    try:
+        work_log_id = work_db.insert({'user_id':user_id,'bind_id':bind_id,'work_id':work_id,'state':state,'message':message})
+        return {'code':0,'message':"日志添加成功"}
+    except Exception as e:
+        return {"code":1,"message":"日志添加失败"}

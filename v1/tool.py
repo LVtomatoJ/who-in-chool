@@ -248,3 +248,8 @@ async def do_heat(cookies:RequestsCookieJar,data:dict):
     elif not return_code == 0:
         return {'code':1,"message":"出现其他错误"}
     return {'code':0,"message":"日检日报打卡成功"}
+
+
+async def add_log(user_id:int,bind_id:str,work_id:str,state:int,message:str):
+    return db.insert_work_log(user_id=user_id,bind_id=bind_id,work_id=work_id,state=state,message=message)
+    
