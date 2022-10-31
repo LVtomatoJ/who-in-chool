@@ -1,9 +1,6 @@
 
 import requests
 
-
-
-
 def net_login(bind_id,bind_password)->dict:
     try:
         url = rf'https://gw.wozaixiaoyuan.com/basicinfo/mobile/login/username'
@@ -11,8 +8,6 @@ def net_login(bind_id,bind_password)->dict:
         return {'code':0,"message":"网络请求成功","data":{'body':r.json(),'cookies':r.cookies}}
     except Exception as e:
         return {'code':1,"message":"网络请求失败"}
-
-
 
 def doHeat(cookies,data)->dict:
     try:
@@ -23,3 +18,5 @@ def doHeat(cookies,data)->dict:
         return {'code':0,'message':"网络请求成功","data":{'code':data['code']}}
     except Exception as e:
         return {'code':1,"message":"网络请求失败"}
+
+

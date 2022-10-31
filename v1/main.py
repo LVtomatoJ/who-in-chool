@@ -31,7 +31,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         content=jsonable_encoder({"code": 1, "message": "提交参数错误"})
     )
 
-@app.get("/v1/reg")
+@app.get("/v1/reg",tags=["users"])
 async def reg(email: EmailStr, open_id: str, password: str):
     r = await tool.check_user_exist(email=email, open_id=open_id)
     if r['code'] != 0:
@@ -41,7 +41,7 @@ async def reg(email: EmailStr, open_id: str, password: str):
         return r
     return r
 
-@app.get("/v1/bind")
+@app.get("/v1/bind",tags=['binds'])
 async def bind(user_id: int, password: str, bind_id: str, bind_password: str):
     r = await tool.check_user_password(user_id=user_id, password=password)
     if r['code'] != 0:
@@ -65,7 +65,7 @@ async def bind(user_id: int, password: str, bind_id: str, bind_password: str):
     return {"code": 0, "message": '绑定成功'}
 
 
-@app.get('/v1/del_bind')
+@app.get('/v1/del_bind',tags=['binds'])
 async def del_bind(user_id: int, password: str, bind_id):
     r = await tool.check_user_password(user_id=user_id, password=password)
     if r['code'] != 0:
@@ -75,7 +75,7 @@ async def del_bind(user_id: int, password: str, bind_id):
         return r
     return {"code": 0, "message": "删除成功"}
 
-@app.get('/v1/get_binds')
+@app.get('/v1/get_binds',tags=['binds'])
 async def get_user_binds(user_id: int, password: str):
     r = await tool.check_user_password(user_id=user_id, password=password)
     if r['code'] != 0:
@@ -86,7 +86,7 @@ async def get_user_binds(user_id: int, password: str):
     return {'code': 0, "message": "查询成功", 'data': r['data']}
 
 
-@app.get('/v1/get_user')
+@app.get('/v1/get_user',tags=['users'])
 async def get_user(user_id: int, password: str):
     r = await tool.check_user_password(user_id=user_id, password=password)
     if r['code'] != 0:
@@ -97,7 +97,7 @@ async def get_user(user_id: int, password: str):
     return {'code': 0, "message": "查询成功", "data": r["data"]}
 
 
-@app.get('/v1/add_work')
+@app.get('/v1/add_work',tags=['works'])
 async def add_work(user_id: int, password: str, bind_id: str, time_type: int, work_type: int, state: int, hour: int, minute: int, weektime: int, template_id: int):
     r = await tool.check_user_password(user_id=user_id, password=password)
     if r['code'] != 0:
@@ -115,7 +115,7 @@ async def add_work(user_id: int, password: str, bind_id: str, time_type: int, wo
     work_id = r['data']['work_id']
     return {'code': 0, 'message': "任务添加成功", 'data': {'work_id': work_id}}
 
-@app.get('/v1/del_work')
+@app.get('/v1/del_work',tags=['works'])
 async def del_work(user_id:int,password:str,work_id:int):
     r = await tool.check_user_password(user_id=user_id, password=password)
     if r['code'] != 0:
@@ -125,7 +125,7 @@ async def del_work(user_id:int,password:str,work_id:int):
         return r
     return {'code':0,'message':"删除任务成功"}
 
-@app.get('/v1/get_works')
+@app.get('/v1/get_works',tags=['works'])
 async def get_works(user_id:int,password:str):
     r = await tool.check_user_password(user_id=user_id, password=password)
     if r['code'] != 0:
@@ -135,9 +135,10 @@ async def get_works(user_id:int,password:str):
         return r
     return {'code':0,'message':"查询任务成功","data":r["data"]}
 
-@app.get('/test_work')
+@app.get('/test_work',tags=['works'])
 async def test_work(work_id:int):
     r = await tool.test_work(work_id=work_id)
     if r['code'] !=0:
         return r
     return r
+

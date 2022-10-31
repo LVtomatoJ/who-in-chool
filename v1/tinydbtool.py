@@ -3,10 +3,16 @@ from typing import Union
 from tinydb import TinyDB,Query
 import traceback
 
-user_db = TinyDB("users.db")
-bind_user_db = TinyDB("bind_users.db")
-template_db = TinyDB("templates.db")
-work_db = TinyDB("works.db")
+# user_db = TinyDB("users.db")
+# bind_user_db = TinyDB("bind_users.db")
+# template_db = TinyDB("templates.db")
+# work_db = TinyDB("works.db")
+
+user_db = TinyDB("main.db").table('users')
+bind_user_db = TinyDB("main.db").table('bind_users')
+template_db = TinyDB("main.db").table('templates')
+work_db = TinyDB("main.db").table('works')
+
 Querydb = Query()
 # template_db.insert({"demo":"132"})
 # Bind_User = Query()
