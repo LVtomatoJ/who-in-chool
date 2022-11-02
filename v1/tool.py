@@ -48,6 +48,18 @@ async def check_user_password(user_id:int,password:str)->dict:
         return {'code':1,"message":"密码错误"}
     return {"code":0,"message":"",'data':r['data']}   
 
+async def check_user_password_by_email(email:str,password:str)->dict:
+    r = db.get_user_by_email(email)
+    if r['code']!=0:
+        return r
+    user = r['data']['user']
+    if user==None:
+        return {'code':1,"message":"用户不存在"}
+    if user['password']!=password:
+        return {'code':1,"message":"密码错误"}
+    return {"code":0,"message":"",'data':{'user_id':user.doc_id}}   
+
+
 async def check_bind_user_password(bind_id,bind_password)->dict:
     try:
         r = net.net_login(bind_id=bind_id,bind_password=bind_password)
