@@ -1,28 +1,22 @@
-import code
 from urllib import request
 from bullet import VerticalPrompt,YesNo,Input,Numbers,Bullet
 from bullet import styles
 import requests
 
-# client = Bullet(**styles.Greece)
 
-# cli = VerticalPrompt(
-#     [
-#         YesNo("Are you a student? "),
-#         Input("Who are you? "),
-#         Numbers("How old are you? "),
-#         Bullet("What is your favorite programming language? ",
-#               choices = ["C++", "Python", "Javascript", "Not here!"],
-#               **styles.Greece),
-#     ],
-#     spacing = 1
-# )
 user = {}
 user_id = 0
 
+def print_user_info():
+    global user
+    print("====用户信息====")
+    for i in user.keys():
+        print('*'+str(i)+" : "+str(user[i]))
+
+
 def login():
-    cli = VerticalPrompt([Input('Input Email : '),
-                      Input('Input Password : '),],spacing = 1)
+    cli = VerticalPrompt([Input('输入邮箱 : '),
+                      Input('输入密码 : '),])
     result = cli.launch()
     email = result[0][1]
     password = result[1][1]
@@ -31,20 +25,28 @@ def login():
     data = r.json()
     if(data['code']!=0):
         return False
+    global user  
     user = data['data']['user']
+    global user_id 
     user_id = data['data']['user_id']
     return True
 
 def menu():
-    clil = Bullet("====菜单====",
-              choices = ["退出登录", "打卡", "用户信息", "退出程序"],
+    clildd = Bullet("====菜单====",
+              choices = ["查看用户信息", "查看绑定信息", "查看任务信息", "退出程序"],
               **styles.Lime)
-    resultt = clil.launch()
+    result = clildd.launch()
+    if result=="查看用户信息":
+        print_user_info()
+        return 1
+    elif result=="查看绑定信息":
+        return 0
+    return 0
+
 
 while user_id==0:
     if(not login()):
         continue
-    menu()
-    
-
+    while menu():
+        pass
 
