@@ -1,6 +1,8 @@
 from urllib import request
 from bullet import VerticalPrompt,YesNo,Input,Numbers,Bullet
 from bullet import styles
+
+from requests.exceptions import ConnectionError
 import requests
 
 
@@ -27,6 +29,10 @@ def print_bind_info():
             print('*'+str(j)+" : "+str(i[j]))
     return bind_data
 
+def print_work_info():
+    pass
+
+
 def get_bind_info():
     global password
     global user_id
@@ -34,7 +40,8 @@ def get_bind_info():
     r = requests.get(url=url+"/v1/get_binds",params={'user_id':user_id,'password':password})
     data = r.json()
     return data
-    
+
+
 
 def login():
     cli = VerticalPrompt([Input('输入邮箱 : '),
@@ -45,7 +52,13 @@ def login():
     global password
     password = result[1][1]
     url = 'http://127.0.0.1:8000'
-    r = requests.get(url=url+"/v1/get_user_by_email",params={'email':email,'password':password})
+    try:
+
+        r = requests.get(url=url+"/v1/get_user_by_email",params={'email':email,'password':password})
+    except ConnectionError as e:
+        print("网络连接失败！")
+        return False
+        
     data = r.json()
     if(data['code']!=0):
         return False
@@ -67,7 +80,8 @@ def menu():
         print_bind_info()
         return 1
     elif result=="查看任务信息":
-        return 0
+        print_work_info()
+        return 1
     elif result=="退出程序":
         return 0
     return 0
