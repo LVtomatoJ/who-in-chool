@@ -19,4 +19,5 @@ def doHeat(cookies,data)->dict:
     except Exception as e:
         return {'code':1,"message":"网络请求失败"}
 
-
+def reset_password(cookies,password)->dict:
+    pass

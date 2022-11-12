@@ -2,7 +2,7 @@ from typing import Union
 import tinydbtool as db
 import nettool as net
 from requests.cookies import RequestsCookieJar
-
+from requests.utils import dict_from_cookiejar
 
 async def check_user_exist(email:Union[str,None],open_id:Union[str,None])->dict:
     if email:
@@ -67,7 +67,9 @@ async def check_bind_user_password(bind_id,bind_password)->dict:
         if code == 0:
             if r['data']['body']['code']!=0:
                 return r['data']['body']
-            jwsession = r['data']['cookies']['JWSESSION']
+            cookiejar:RequestsCookieJar = r['data']['cookies']
+            cookiedict =  dict_from_cookiejar(cookiejar)
+            jwsession =cookiedict['JWSESSION']
             return {'code':0,"message":"网络请求成功","data":{"jwsession":jwsession}}
         else:
             return r
@@ -171,6 +173,15 @@ async def get_user(user_id:int):
         return {'code':1,"message":"用户不存在"}
     return {"code":0,"message":"",'data':{'user':user}} 
 
+async def get_user_by_email(email:str):
+    r = db.get_user_by_email(email=email)
+    if r['code']!=0:
+        return r
+    user = r['data']['user']
+    if user==None:
+        return {'code':1,"message":"用户不存在"}
+    return {"code":0,"message":"",'data':{'user':user}} 
+
 async def get_works(user_id:int):
     r = db.get_works_by_user_id(user_id=user_id)
     if r['code']!=0:
@@ -186,7 +197,6 @@ async def add_bind_user(user_id:int,bind_id:str,bind_password:str,jwsession:str)
 
 async def add_work(user_id:int,bind_id:str,time_type:int,work_type:int,state:int,hour:int,minute:int,weektime:int,template_id:int):
     return db.insert_work(user_id=user_id,bind_id=bind_id,time_type=time_type,work_type=work_type,state=state,hour=hour,minute=minute,weektime=weektime,template_id=template_id)
-
 
 async def del_bind(bind_id:str):
     r = db.del_bind_user(bind_id=bind_id)
@@ -206,11 +216,18 @@ async def del_work(work_id:int,user_id:int):
         return {'code':1,"message":"删除失败，未找到该任务"}
     return {'code':0,"message":"删除成功",'data':{"del_works":del_works}}
 
+async def check_work_user_exist(user_id:int,work_id:int):
+    pass
+async def run_work(user_id:int,work_id:int):
+    r = check_work_user_exist(user_id=user_id,work_id=work_id)
+
 
 async def jwsession_cookie_str_to_jar(jwsession:str)->RequestsCookieJar:
     jar = RequestsCookieJar()
     jar.set("JWSESSION",jwsession)
     return jar
+
+
 
 
 async def test_work(work_id:int):
@@ -264,4 +281,13 @@ async def do_heat(cookies:RequestsCookieJar,data:dict):
 
 async def add_log(user_id:int,bind_id:str,work_id:str,state:int,message:str):
     return db.insert_work_log(user_id=user_id,bind_id=bind_id,work_id=work_id,state=state,message=message)
-    
+
+
+
+
+
+async def reset_cookie():
+    pass
+
+async def reset_password():
+    pass
