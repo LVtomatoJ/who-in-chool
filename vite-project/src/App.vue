@@ -3,6 +3,7 @@
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
 // import HelloWorld from './components/HelloWorld.vue'
 import Login from './components/Login.vue'
+
 </script>
 
 <template>
@@ -16,14 +17,8 @@ import Login from './components/Login.vue'
   </div>
   <HelloWorld msg="Vite + Vue" /> -->
   <div style="display: flex;justify-content:center;align-items: center;">
-    <el-card class="box-card">
-      <template #header>
-        <div class="card-header">
-          <span>登录</span>
-        </div>
-      </template>
-      <Login />
-    </el-card>
+      
+      <RouterView />
   </div>
 
 </template>
