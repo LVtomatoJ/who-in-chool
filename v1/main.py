@@ -14,8 +14,8 @@ import tool
 app = FastAPI()
 
 origins = [
-    "http://localhost:3000",
-    "localhost:3000"
+    "http://localhost:3333",
+    "localhost:3333"
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -114,6 +114,7 @@ async def reg(email: EmailStr, open_id: str, password: str):
 
 
 @app.get("/")
+# async def hello():
 async def hello(d = Depends(get_current_user)):
     return {'hello':"22"}
 
