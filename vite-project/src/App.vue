@@ -16,7 +16,7 @@ import Login from './components/Login.vue'
     </a>
   </div>
   <HelloWorld msg="Vite + Vue" /> -->
-  <div style="display: flex;justify-content:center;align-items: center;">
+  <div >
       
       <RouterView />
   </div>

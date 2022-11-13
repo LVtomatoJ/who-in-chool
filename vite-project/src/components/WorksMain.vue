@@ -1,0 +1,3 @@
+<template>
+    hello works
+</template>
