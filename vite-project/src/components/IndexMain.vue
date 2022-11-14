@@ -1,7 +1,7 @@
 <template>
       <el-descriptions
     class="margin-top"
-    title="用户信息"
+    title="账号信息"
     :column="2"
     border
   >
@@ -57,8 +57,9 @@
 
 <script lang="ts" setup>
 import {store} from '../store'
-import axios from 'axios'
+import axios from '../defaultaxios'
 import { onBeforeMount, reactive ,ref} from 'vue'
+import router from '../router/router';
 const Authorization = store.Authorization
 // let UserInfo = ref(store.UserInfo)
 let UserInfo = reactive({
@@ -77,15 +78,21 @@ onBeforeMount(() => {
 const getdUserInfo = ()=>{
     axios({
         method: 'get',
-        url: 'http://127.0.0.1:8000/v2/getuserinfo',
+        url: '/v2/getuserinfo',
         headers: { Authorization: 'Bearer ' + store.Authorization }
     }).then(function (response) {
-        console.log(response.data)
-        UserInfo.email = response.data['data']['user']['email']
-        UserInfo.level = response.data['data']['user']['level']
-        UserInfo.maxbindnum = response.data['data']['user']['maxbindnum']
-        UserInfo.maxworknum = response.data['data']['user']['maxworknum']
-        // UserInfo.email="123"
+        // console.log(typeof(response))
+        // console.log(response)
+        if (response){
+            UserInfo.email = response.data['data']['user']['email']
+            UserInfo.level = response.data['data']['user']['level']
+            UserInfo.maxbindnum = response.data['data']['user']['maxbindnum']
+            UserInfo.maxworknum = response.data['data']['user']['maxworknum']
+        }else{
+            // router.replace('/login')
+        }
+          
+            // UserInfo.email="123"
         // console.log(UserInfo)
     })
 }

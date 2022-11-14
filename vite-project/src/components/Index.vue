@@ -19,7 +19,7 @@
             <el-container>
                 <el-aside width="200px">
 
-                    <el-menu router=true default-active="index">
+                    <el-menu router default-active="index">
                         <el-menu-item index="index">
                             <el-icon>
                                 <HomeFilled />

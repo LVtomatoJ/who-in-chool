@@ -1,5 +1,5 @@
 import tinydbtools as dbtools
-
+import nettolls
 
 async def check_user_exist_by_email(email:str)->bool:
     """检查是否存在email对应用户
@@ -84,3 +84,62 @@ async def get_user_info_by_email(email:str):
     if user==None:
         return {'code':502}
     return {'code':0,'data':{'user':user}}
+
+async def add_bind(email:str,bindid:str,password:str,notes:str):
+    """添加绑定
+
+    Args:
+        email (str): 邮箱
+        bindid (str): 绑定id
+        password (str): 绑定密码
+        jwsession (str): session
+
+    Returns:
+        dict: {code:[
+            0:成功
+            502:用户不存在
+            404:绑定用户达上线
+            405:绑定用户已存在
+        ]}
+    """
+    user = dbtools.get_user_by_email(email=email)
+    if user==None:
+        return {'code':502,'msg':'用户不存在'}
+    maxbindnum = user['maxbindnum']
+    bindcount = dbtools.get_bind_count_by_email(email=email)
+    if bindcount >= maxbindnum:
+        return {'code':404,'msg':"绑定用户达到上限"}
+    if dbtools.check_bind_exist_by_bindid(bindid=bindid):
+        return {'code':405,'msg':"绑定用户已存在"}
+    res = nettolls.getJwsession(bindid=bindid,password=password)
+    code = res['code']
+    if code!=0:
+        if code==405:
+            return {'code':405,'msg':res['msg']}
+        else:
+            return {'code':503,'msg':'网络请求失败'}
+    jwsession = res['data']['jwsession']
+    res = nettolls.getSchool(jwsession=jwsession)
+    if code!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    school = res['data']['school']
+    doc_id = dbtools.add_bind(email=email,bindid=bindid,password=password,jwsession=jwsession,notes=notes,school=school)
+    return {'code':0}
+
+async def get_binds(email:str):
+    user = dbtools.get_user_by_email(email=email)
+    if user==None:
+        return {'code':502,'msg':"用户不存在"}
+    users = dbtools.get_binds(email=email)
+    return {'code':0,'data':{'binds':users}}
+
+async def del_bind(email:str,bindid:str):
+    user = dbtools.get_user_by_email(email=email)
+    if user==None:
+        return {'code':502,'msg':"用户不存在"}
+    if not dbtools.check_bind_exist_by_bindid(bindid=bindid):
+        return {'code':406,"msg":"绑定用户不存在"}
+    delbinds = dbtools.del_bind(bindid=bindid)
+    if delbinds==[]:
+        return {'code':504,'msg':"删除结果为空"}
+    return {'code':0}

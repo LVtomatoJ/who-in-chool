@@ -88,8 +88,8 @@ const onSubmit = () => {
                 client_secret: ""
             }
         }).then(function (response) {
-            console.log("test on")
-            console.log(response.data.access_token);
+            // console.log("test on")
+            // console.log(response.data.access_token);
             store.setAuthorization(response.data.access_token)
             router.push('/index/index')
             // console.log(response.status);

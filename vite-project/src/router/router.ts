@@ -2,7 +2,7 @@ import { createRouter,createWebHistory } from "vue-router";
 import Login from '../components/Login.vue';
 import Index from '../components/Index.vue';
 import IndexMain from '../components/IndexMain.vue';
-import UsersMain from '../components/UsersMain.vue';
+import UsersMain from '../components/BindUsersMain.vue';
 import WorksMain from '../components/WorksMain.vue';
 import AdminMain from '../components/AdminMain.vue';
 

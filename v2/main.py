@@ -21,24 +21,34 @@ class UserInfo(BaseModel):
     maxbindnum:int
     maxworknum:int
 
-
-
-
+# origins = [
+#     "http://localhost:3333",
+#     "localhost:3333"
+# ]
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=origins,
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"]
+# )
 origins = [
+    "http://localhost",
     "http://localhost:3333",
-    "localhost:3333"
+    "http://localhost:5173",
 ]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
 SECRET_KEY ='5d8788a74ba363c1b08329363b42f30c75d3cb762714aa32761cb0e214b5474d'
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 15
+ACCESS_TOKEN_EXPIRE_MINUTES = 120
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -125,13 +135,34 @@ async def hello(auto = Depends(get_current_user_by_email)):
 
 @app.get("/v2/getuserinfo")
 # async def hello():
-async def hello(auth = Depends(get_current_user_by_email)):
+async def getuserinfo(auth = Depends(get_current_user_by_email)):
     email = auth['email']
     res = await tools.get_user_info_by_email(email=email)
     if res['code']!=0:
-        return {'code':502}
+        return {'code':502,'msg':"获取失败，不存在该用户"}
     user = res['data']['user']
     return {'code':0,'data':{'user':UserInfo(**user)}}
-    
-    
 
+@app.get('/v2/addbind')
+async def addbind(bindid:str,password:str,notes:str,auth = Depends(get_current_user_by_email)):
+    email = auth['email']
+    res = await tools.add_bind(email=email,bindid=bindid,password=password,notes=notes)
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    return {'code':0,'message':"添加成功"}
+
+@app.get('/v2/getbinds')
+async def getbinds(auth = Depends(get_current_user_by_email)):
+    email = auth['email']
+    res = await tools.get_binds(email=email)
+    if res['code']!=0:
+        return {'code':res['code','msg':res['msg']]}
+    return {'code':0,'msg':"获取绑定成功",'data':{'binds':res['data']['binds']}}
+
+@app.get('/v2/delbind')
+async def delbind(bindid:str,auth = Depends(get_current_user_by_email)):
+    email = auth['email']
+    res =  await tools.del_bind(email=email,bindid=bindid)
+    if res['code']!=0:
+        return {'code':res['code','msg':res['msg']]}
+    return {'code':0,'msg':"删除绑定成功"}   
