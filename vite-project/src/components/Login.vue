@@ -97,7 +97,7 @@ const onSubmit = () => {
             // console.log(response.headers);
             // console.log(response.config);
         }).catch(function (reason) {
-            // console.log(reason)
+            console.log(reason)
             ElMessage({
                 message: '登录失败，请检查用户名和密码后重试.',
                 grouping: true,
