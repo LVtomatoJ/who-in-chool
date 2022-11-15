@@ -42,6 +42,18 @@ def check_bind_exist_by_bindid(bindid:str):
     anser = bind_db.contains(Querydb.bindid==bindid)
     return anser
 
+
+def check_template_exist(templateid:str):
+    """检查openid对应用户是否存在
+
+    Args:
+        openid (str): wechat_openid
+    Returns:
+        boolean:用户是否存在
+    """
+    anser = template_db.contains(Querydb.templateid==templateid)
+    return anser
+
 def get_user_by_email(email:str):
     """通过email获取user
     Args:
@@ -91,3 +103,11 @@ def del_bind(bindid:str):
 def get_templates():
     templates = template_db.all()
     return templates
+
+def get_bind(bindid:str):
+    bind = bind_db.get(Querydb.bindid==bindid)
+    return bind
+
+def get_template(templateid:str):
+    template = template_db.get(Querydb.templateid==templateid)
+    return template

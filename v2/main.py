@@ -84,7 +84,7 @@ def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-async def get_current_user_by_email(token: str = Depends(oauth2_scheme)):
+async def get_current_user_by_email(token: str = Depends(oauth2_scheme)): 
     """验证token[email]
 
     Args:
@@ -171,7 +171,7 @@ async def getbinds(auth = Depends(get_current_user_by_email)):
     email = auth['email']
     res = await tools.get_binds(email=email)
     if res['code']!=0:
-        return {'code':res['code','msg':res['msg']]}
+        return {'code':res['code'],'msg':res['msg']}
     return {'code':0,'msg':"获取绑定成功",'data':{'binds':res['data']['binds']}}
 
 @app.get('/v2/delbind')
@@ -179,7 +179,7 @@ async def delbind(bindid:str,auth = Depends(get_current_user_by_email)):
     email = auth['email']
     res =  await tools.del_bind(email=email,bindid=bindid)
     if res['code']!=0:
-        return {'code':res['code','msg':res['msg']]}
+        return {'code':res['code'],'msg':res['msg']}
     return {'code':0,'msg':"删除绑定成功"}   
 
 @app.get('/v2/gettemplates')
@@ -187,5 +187,13 @@ async def gettemplates(auth = Depends(get_current_user_by_email)):
     email = auth['email']
     res = await tools.get_templates(email=email)
     if res['code']!=0:
-        return {'code':res['code','msg':res['msg']]}
+        return {'code':res['code'],'msg':res['msg']}
     return {'code':0,'msg':"查找模板成功",'data':Templates(templates=res['data']['templates'])}  
+
+@app.get('/v2/quickwork')
+async def quckwork(bindid:str,templateid:str,auth = Depends(get_current_user_by_email)):
+    email = auth['email']
+    res = await tools.quick_work(email=email,templateid=templateid,bindid=bindid)
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    return {'code':0,'msg':"任务执行成功"}  

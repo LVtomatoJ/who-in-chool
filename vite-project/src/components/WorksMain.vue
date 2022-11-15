@@ -111,7 +111,7 @@ const getTemplates = () => {
     console.log('templates:')
     console.log(templates)
   })
-}w
+}
 
 const getWorks = () => {
   axios({
@@ -137,8 +137,35 @@ const getWorks = () => {
   })
 }
 const onAddWork = () => {
-  console.log("添加中：")
-  console.log(form)
+  if(form.type=='1'){
+    axios({
+      method:'get',
+      url:'/v2/quickwork',
+      headers: { Authorization: 'Bearer ' + store.Authorization },
+      params:{'bindid':form.bindid,'templateid':form.templateid}
+    }).then(res=>{
+      console.log(res)
+      const code = res.data.code
+    if (code != 0) {
+      ElMessage({
+        message: res.data.message,
+        grouping: true,
+        type: 'error',
+      })
+    } else {
+      ElMessage({
+        message: "执行成功",
+        grouping: true,
+        type: 'success',
+      })
+    }
+    })
+  }else{
+    console.log("pass")
+  }
+
+  
+  // console.log(form)
 }
 
 </script>

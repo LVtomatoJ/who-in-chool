@@ -150,3 +150,28 @@ async def get_templates(email:str):
         return {'code':502,'msg':"用户不存在"}
     templates = dbtools.get_templates()
     return {'code':0,'data':{'templates':templates}}
+
+
+async def quick_work(email:str,templateid:str,bindid:str):
+    user = dbtools.get_user_by_email(email=email)
+    if user==None:
+        return {'code':502,'msg':"用户不存在"}
+    # if not dbtools.check_bind_exist_by_bindid(bindid=bindid):
+    #     return {'code':406,"msg":"绑定用户不存在"}
+    # if not dbtools.check_bind_exist_by_bindid(bindid=bindid):
+    #     return {'code':406,"msg":"绑定用户不存在"}
+    # if not dbtools.check_template_exist(templateid=templateid)
+    #     return {'code':407,'msg':"模板不存在"}
+
+    bind = dbtools.get_bind(bindid=bindid)
+    template = dbtools.get_template(templateid=templateid)
+    if bind==None:
+        return {'code':406,'msg':'绑定用户不存在'}
+    if template==None:
+        return {'code':407,'msg':"模板不存在"}
+    res = nettolls.doHeat(jwsession=bind['jwsession'],data=template['data'])
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    return {'code':0,'msg':"任务执行成功"}
+
+    

@@ -10,5 +10,6 @@ export const store = reactive({
       level:0,
       maxbindnum:0,
       maxworknum:0
-    }
+    },
+    Binds:[]
 })
