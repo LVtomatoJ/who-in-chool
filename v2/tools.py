@@ -143,3 +143,10 @@ async def del_bind(email:str,bindid:str):
     if delbinds==[]:
         return {'code':504,'msg':"删除结果为空"}
     return {'code':0}
+
+async def get_templates(email:str):
+    user = dbtools.get_user_by_email(email=email)
+    if user==None:
+        return {'code':502,'msg':"用户不存在"}
+    templates = dbtools.get_templates()
+    return {'code':0,'data':{'templates':templates}}

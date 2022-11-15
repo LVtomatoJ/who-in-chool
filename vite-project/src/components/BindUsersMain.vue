@@ -3,6 +3,7 @@
     <el-tab-pane label="列表" name="list">
       
       <el-table table-layout="auto" :data="binds" border style="width: 100%">
+        <el-table-column type="index"></el-table-column>
         <el-table-column prop="bindid" label="用户id" width="180" />
         <el-table-column prop="status" label="状态" width="70" />
         <el-table-column prop="school" label="学校" />
@@ -45,7 +46,7 @@ import { ref, reactive } from 'vue'
 import type { TabsPaneContext } from 'element-plus'
 import axios from '../defaultaxios';
 import { store } from '../store'
-import { bind } from 'lodash';
+
 const activeName = ref('list')
 const form = reactive({
   bindid: '',
@@ -60,7 +61,7 @@ onBeforeMount(() => {
 })
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {
-  console.log(tab, event)
+  // console.log(tab, event)
 }
 const deleteBind = (index: number) => {
   axios({
@@ -153,7 +154,8 @@ const getBinds = () => {
     // console.log(response)
     if (response) {
       binds.slice(0)
-      let r_binds = response.data['data']['binds']
+      const r_binds = response.data['data']['binds']
+      store.Binds = r_binds
       r_binds.forEach((e: any) => {
         binds.push(e)
       });

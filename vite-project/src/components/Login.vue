@@ -49,7 +49,7 @@ import { store } from '../store.js'
 
 onBeforeMount(() => {
     //   console.log(store.Authorization)
-    store.Authorization=''
+    store.setAuthorization('')
 })
 
 const router = useRouter()

@@ -21,6 +21,17 @@ class UserInfo(BaseModel):
     maxbindnum:int
     maxworknum:int
 
+class Template(BaseModel):
+    
+    templateid:str
+    name:str
+    status:int
+    school:str
+
+class Templates(BaseModel):
+    templates:list[Template]
+
+
 # origins = [
 #     "http://localhost:3333",
 #     "localhost:3333"
@@ -32,10 +43,14 @@ class UserInfo(BaseModel):
 #     allow_methods=["*"],
 #     allow_headers=["*"]
 # )
+
 origins = [
     "http://localhost",
     "http://localhost:3333",
     "http://localhost:5173",
+    "http://127.0.0.1",
+    "http://127.0.0.1:3333",
+    "http://127.0.0.1:5173",
 ]
 
 app.add_middleware(
@@ -166,3 +181,11 @@ async def delbind(bindid:str,auth = Depends(get_current_user_by_email)):
     if res['code']!=0:
         return {'code':res['code','msg':res['msg']]}
     return {'code':0,'msg':"删除绑定成功"}   
+
+@app.get('/v2/gettemplates')
+async def gettemplates(auth = Depends(get_current_user_by_email)):
+    email = auth['email']
+    res = await tools.get_templates(email=email)
+    if res['code']!=0:
+        return {'code':res['code','msg':res['msg']]}
+    return {'code':0,'msg':"查找模板成功",'data':Templates(templates=res['data']['templates'])}  

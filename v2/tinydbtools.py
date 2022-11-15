@@ -1,3 +1,5 @@
+import random
+import string
 from tinydb import TinyDB,Query
 
 user_db = TinyDB("main.db").table('users')
@@ -85,3 +87,7 @@ def get_binds(email:str):
 def del_bind(bindid:str):
     delbinds = bind_db.remove(Querydb.bindid == bindid)
     return delbinds
+
+def get_templates():
+    templates = template_db.all()
+    return templates
