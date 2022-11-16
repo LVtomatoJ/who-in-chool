@@ -1,0 +1,7 @@
+APScheduler==3.9.1
+fastapi==0.87.0
+jose==1.0.0
+pydantic==1.10.1
+python_jose==3.3.0
+requests==2.22.0
+tinydb==4.7.0
