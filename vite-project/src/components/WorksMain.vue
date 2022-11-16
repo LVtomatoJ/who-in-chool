@@ -1,20 +1,50 @@
 <template>
   <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="列表" name="list">
-      <el-table table-layout="auto" :data="store.Works" border style="width: 100%;margin-top: 20px;">
-        <el-table-column type="index"></el-table-column>
+      <el-table table-layout="auto" :data="store.Works" border style="width: 100%;margin-top: 20px;" :row-class-name="tableRowClassName">
+        <el-table-column type="index"/>
         <el-table-column prop="workid" label="任务id" width="120" />
-        <el-table-column prop="status" label="状态" width="70" />
+        <el-table-column  label="状态" width="100" >
+          <!-- <template #default="scope">
+ 
+          </template> -->
+          <template #default="scope">
+          
+            <div v-if="scope.row.status===1">
+              运行
+            </div>
+            <div v-else>
+              暂停
+            </div>
+            
+
+      </template>
+
+      
+          </el-table-column>
         <el-table-column prop="bindid" label="绑定用户id" />
         <el-table-column prop="starttime" label="开始时间" width="160" />
         <el-table-column prop="endtime" label="结束时间" width="160" />
-        <el-table-column fixed="right" label="操作" width="70">
+        
+        <el-table-column header-align="center" fixed="right" label="操作" width="120">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="deleteWork(scope.$index)">
+            <!-- <el-button link type="primary" size="small" @click="testeWork(scope.row)">
+              test
+            </el-button> -->
+            <div style="display: flex; align-items: center">
+            <el-button link type="primary" size="small" v-if="scope.row.status===1" @click="stopWork(scope.row.workid)">
+              暂停
+            </el-button>
+            <el-button link type="primary" size="small" v-else @click="runWork(scope.row.workid)">
+              运行
+            </el-button>
+            <el-button link type="primary" size="small" @click="deleteWork(scope.row.workid)">
               删除
             </el-button>
+          </div>
           </template>
         </el-table-column>
+        
       </el-table>
     </el-tab-pane>
     <el-tab-pane label="添加任务" name="add">
@@ -25,7 +55,7 @@
           <el-select v-model="form.bindid" placeholder="选择任务账号">
             <template v-for="bind in store.Binds">
               <el-option v-bind:label="bind['bindid']" v-bind:value="bind['bindid']" />
-
+              
             </template>
 
           </el-select>
@@ -87,6 +117,9 @@
 
 
     </el-tab-pane>
+    <el-tab-pane label="任务日志" name="log">
+
+    </el-tab-pane>
   </el-tabs>
 </template>
 
@@ -134,6 +167,41 @@ onBeforeMount(() => {
   getWorks()
 })
 
+const testeWork = (rr:any)=>{
+  console.log(rr)
+  if (rr['status']===1) {
+    return true
+  }else{
+    return false
+  }
+}
+
+interface Work {
+
+  workid: string
+  status: number
+  starttime: string
+  endtime: string
+  bindid: string
+
+}
+
+const tableRowClassName = ({
+  row,
+  rowIndex,
+}: {
+  row: Work
+  rowIndex: number
+}) => {
+  // console.log(row.status=="出错暂停")
+  if (row.status === 2) {
+    return 'warning-row'
+  } else if (row.status ===  1) {
+    return 'success-row'
+  }
+  return ''
+}
+
 const getTemplates = () => {
   axios({
     method: 'get',
@@ -155,7 +223,13 @@ const getTemplates = () => {
   })
 }
 
-const deleteWork = (index:number) =>{
+const deleteWork = (worid:string) =>{
+  
+}
+const runWork = (workid:string) =>{
+
+}
+const stopWork = (workid:string) =>{
 
 }
 
@@ -168,7 +242,15 @@ const getWorks = () => {
     // console.log(typeof(response))
     // console.log(response)
     if (response) {
-      store.Works = response.data['data']['works']
+      let r_works:any[] = response.data['data']['works']
+      // r_works.forEach(work=>{
+      //   if(work['status']==1){
+      //     work['status']="运行中"
+      //   }else if(work['status']==2){
+      //     work['status']="出错暂停"
+      //   }
+      // })
+      store.Works = r_works
       // console.log(r_binds)
     } else {
       // router.replace('/login')
@@ -178,6 +260,7 @@ const getWorks = () => {
     // console.log(UserInfo)
   })
 }
+
 const onAddWork = () => {
   if(form.type=='1'){
     axios({
@@ -232,3 +315,12 @@ const onAddWork = () => {
 }
 
 </script>
+
+<style>
+.el-table .warning-row {
+  --el-table-tr-bg-color: var(--el-color-error-light-9);
+}
+.el-table .success-row {
+  --el-table-tr-bg-color: var(--el-color-success-light-9);
+}
+</style>
