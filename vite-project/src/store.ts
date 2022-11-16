@@ -11,5 +11,6 @@ export const store = reactive({
       maxbindnum:0,
       maxworknum:0
     },
-    Binds:[]
+    Binds:<any[]>[],
+    Works:<any[]>[],
 })

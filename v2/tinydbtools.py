@@ -82,12 +82,17 @@ def add_user(email:str,password:str,openid:str,level:int,maxbindnum:int,maxworkn
     doc_id = user_db.insert({'email':email,'password':password,'openid':openid,'level':level,'maxbindnum':maxbindnum,'maxworknum':maxworknum})
     return doc_id
 
+def add_work(email:str,bindid:str,templateid:str,starttime:str,endtime:str,workid:str)->int:
+    doc_id = work_db.insert({'email':email,'bindid':bindid,'templateid':templateid,'status':1,'starttime':starttime,'endtime':endtime,'workid':workid})
+    return doc_id
 
 
 def get_bind_count_by_email(email:str)->int:
     count = bind_db.count(Querydb.email == email)
     return count
-
+def get_work_count_by_email(email:str)->int:
+    count = work_db.count(Querydb.email == email)
+    return count
 def add_bind(email:str,bindid:str,password:str,jwsession:str,notes:str,school:str):
     doc_id = bind_db.insert({'email':email,"bindid":bindid,'password':password,'jwsession':jwsession,'notes':notes,'school':school,'status':1})
     return doc_id
@@ -96,10 +101,18 @@ def get_binds(email:str):
     binds = bind_db.search(Querydb.email == email)
     return binds
 
+def get_works(email:str):
+    works = work_db.search(Querydb.email == email)
+    return works
+
 def del_bind(bindid:str):
     delbinds = bind_db.remove(Querydb.bindid == bindid)
     return delbinds
 
+def del_work(workid:str):
+    delworks = work_db.remove(Querydb.workid == workid)
+    return delworks
+    
 def get_templates():
     templates = template_db.all()
     return templates
@@ -108,6 +121,22 @@ def get_bind(bindid:str):
     bind = bind_db.get(Querydb.bindid==bindid)
     return bind
 
+def get_work(workid:str):
+    work = work_db.get(Querydb.workid==workid)
+    return work
+
 def get_template(templateid:str):
     template = template_db.get(Querydb.templateid==templateid)
     return template
+
+def update_work_status(workid:str,status:int):
+    works = work_db.update({'status':status},Querydb.workid==workid)
+    return works
+
+def update_bind_status(bindid:str,status:int):
+    binds = work_db.update({'status':status},Querydb.bindid==bindid)
+    return binds
+
+def get_all_works():
+    works = work_db.all()
+    return works

@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import time
-from typing import Optional, Union
+from typing import List, Optional, Union
 from fastapi import FastAPI, status, Request,Depends,HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
@@ -9,10 +9,52 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.jobstores.mongodb import MongoDBJobStore
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
+from apscheduler.job import Job
 import tools
-
+import tinydbtools as dbtool
 app = FastAPI()
 
+
+
+def init_jobs(jobs:List[Job]):
+    works_dict = dict()
+    works:List[dict] = dbtool.get_all_works()
+    for work in works:
+        works_dict[work['workid']] = work['status']
+    workids = works_dict.keys()
+    for job in jobs:
+        jobid = job.id
+        if jobid not in workids:
+            job.remove()
+            continue
+        if works_dict[jobid]==2:
+            job.pause()
+            continue
+        if works_dict[jobid]==1:
+            job.resume()
+            continue
+        
+    
+
+
+@app.on_event('startup')
+def init_scheduler():
+    jobstores = {
+        'default': SQLAlchemyJobStore(url='sqlite:///jobs.sqlite')
+    }
+    global scheduler
+    
+    scheduler = BackgroundScheduler()
+    scheduler.configure(jobstores=jobstores)
+    scheduler.start()
+    jobs = scheduler.get_jobs()
+    init_jobs(jobs=jobs)
+    scheduler.print_jobs()
+    
 
 class UserInfo(BaseModel):
     email:str
@@ -133,9 +175,14 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 @app.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     # user = authenticate_user(fake_users_db, form_data.username, form_data.password)
+    # print("11111")
+    # print('username:'+form_data.username)
+    # print("password:"+form_data.password)
+
     r = await tools.check_user_email_password(email=form_data.username,password=form_data.password)
     if r['code']!=0:
         return r
+    print(r)
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": form_data.username}, expires_delta=access_token_expires
@@ -197,3 +244,42 @@ async def quckwork(bindid:str,templateid:str,auth = Depends(get_current_user_by_
     if res['code']!=0:
         return {'code':res['code'],'msg':res['msg']}
     return {'code':0,'msg':"任务执行成功"}  
+
+@app.get('/v2/addwork')
+async def addwork(bindid:str,templateid:str,starttime:str,endtime:str,auth = Depends(get_current_user_by_email)):
+    email = auth['email']
+    global scheduler
+    res = await tools.add_work(email=email,bindid=bindid,templateid=templateid,scheduler=scheduler,starttime=starttime,endtime=endtime)
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    return {'code':0,'msg':"任务添加成功"}  
+
+@app.get('/v2/getworks')
+async def getworkd(auth = Depends(get_current_user_by_email)):
+    email = auth['email']
+    res = await tools.get_works(email=email)
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    return {'code':0,'msg':"任务获取成功",'data':{'works':res['data']['works']}}   
+
+
+@app.get('/v2/getallworks')
+async def getallworks():
+    global scheduler
+    scheduler.print_jobs()
+    return{0}
+
+# def printtime(name:str):
+#     print("lalala")
+#     return 0
+# @app.get('/addwork')
+# async def addwork():
+#     global scheduler
+#     scheduler.add_job(printtime,'cron',minutes=1)
+#     return {"ok":'ok'}
+
+# @app.get('/addwork')
+# async def addwork():
+#     global scheduler
+#     job = scheduler.add_job(printtime,'interval',hours=2,minutes=1,jitter=60,args=[data, ])
+#     return {"jobid":job.id}

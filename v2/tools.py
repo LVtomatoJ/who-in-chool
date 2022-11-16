@@ -1,6 +1,8 @@
+import random
+import string
 import tinydbtools as dbtools
 import nettolls
-
+from apscheduler.schedulers.background import BackgroundScheduler
 async def check_user_exist_by_email(email:str)->bool:
     """检查是否存在email对应用户
 
@@ -54,7 +56,7 @@ async def check_user_email_password(email:str,password:str):
     # if not code == 0:
     #     return {'code':code}
     # user = r['data']['user']
-    if not user:
+    if user==None:
         return {'code':502}
     if user['password']!=password:
         return {'code':402}
@@ -133,6 +135,12 @@ async def get_binds(email:str):
     users = dbtools.get_binds(email=email)
     return {'code':0,'data':{'binds':users}}
 
+async def get_works(email:str):
+    if not dbtools.check_user_exist_by_email(email=email):
+        return {'code':502,'msg':'用户不存在'}
+    works = dbtools.get_works(email=email)
+    return {'code':0,'data':{'works':works}}
+
 async def del_bind(email:str,bindid:str):
     user = dbtools.get_user_by_email(email=email)
     if user==None:
@@ -152,6 +160,8 @@ async def get_templates(email:str):
     return {'code':0,'data':{'templates':templates}}
 
 
+
+
 async def quick_work(email:str,templateid:str,bindid:str):
     user = dbtools.get_user_by_email(email=email)
     if user==None:
@@ -169,9 +179,91 @@ async def quick_work(email:str,templateid:str,bindid:str):
         return {'code':406,'msg':'绑定用户不存在'}
     if template==None:
         return {'code':407,'msg':"模板不存在"}
-    res = nettolls.doHeat(jwsession=bind['jwsession'],data=template['data'])
+    data=template['data']
+    jwsession=bind['jwsession']
+    res = nettolls.doHeat(jwsession=jwsession,data=data)
     if res['code']!=0:
         return {'code':res['code'],'msg':res['msg']}
     return {'code':0,'msg':"任务执行成功"}
 
+
+
+def printhaha():
+    print('hahahah')
+
+
+def long_work(email:str,bindid:str,templateid:str,workid:str):
+
+    #不存在任务直接停止
+    work = dbtools.get_work(workid=workid)
+    if work==None:
+        return
+
+    #参数缺失 删除任务后停止
+    user = dbtools.get_user_by_email(email=email)
+    if user==None:
+        r = dbtools.del_work(workid=workid)
+        #add log
+        return
+    bind = dbtools.get_bind(bindid=bindid)
+    if bind==None:
+        r = dbtools.del_work(workid=workid)
+        #add log
+        return
+    template = dbtools.get_template(templateid=templateid)
+    if template==None:
+        r = dbtools.del_work(workid=workid)
+        #add log
+        return
+
+    # print("3")
+    # print(workid)
+    # work = dbtools.get_work(workid=workid)
+    # print(work)
+
+    #任务状态不为1 停止
+    if work['status']!=1:
+        return 
+
+    data=template['data']
+    jwsession=bind['jwsession']
+    res = nettolls.doHeat(jwsession=jwsession,data=data)
+    code = res['code']
+    if code!=0:
+        #失败操作
+        if code==505:
+            #bind status 2：失效
+            dbtools.update_bind_status(bindid=bindid,status=2)
+            #work status 2:暂停
+            dbtools.update_work_status(workid=workid,status=2)
+            #add log
+            return
+        else:
+            dbtools.update_work_status(workid=workid,status=2)
+            #add log
+            return
+
+    #add success log
+    print('yes!')
+    
+
+async def add_work(email:str,bindid:str,templateid:str,scheduler:BackgroundScheduler,starttime:str,endtime:str):
+    user = dbtools.get_user_by_email(email=email)
+    if user==None:
+        return {'code':502,'msg':"用户不存在"}
+    bind = dbtools.get_bind(bindid=bindid)
+    template = dbtools.get_template(templateid=templateid)
+    if bind==None:
+        return {'code':406,'msg':'绑定用户不存在'}
+    if template==None:
+        return {'code':407,'msg':"模板不存在"}
+    maxbindnum:int = user['maxbindnum']
+    workcount = dbtools.get_work_count_by_email(email=email)
+    if maxbindnum<=workcount:
+        return {'code':408,'msg':"任务数量超过限制"}
+    workid= ''.join(random.sample(string.ascii_letters + string.digits, 10))
+    docid = dbtools.add_work(email=email,bindid=bindid,templateid=templateid,starttime=starttime,endtime=endtime,workid=workid)
+    job = scheduler.add_job(long_work,args=(email,bindid,templateid,workid,),trigger='interval',minutes=1,start_date=starttime,end_date=endtime,id=workid)
+    return {'code':0}
+    
     

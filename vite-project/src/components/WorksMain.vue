@@ -1,7 +1,21 @@
 <template>
   <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="列表" name="list">
-
+      <el-table table-layout="auto" :data="store.Works" border style="width: 100%;margin-top: 20px;">
+        <el-table-column type="index"></el-table-column>
+        <el-table-column prop="workid" label="任务id" width="120" />
+        <el-table-column prop="status" label="状态" width="70" />
+        <el-table-column prop="bindid" label="绑定用户id" />
+        <el-table-column prop="starttime" label="开始时间" width="160" />
+        <el-table-column prop="endtime" label="结束时间" width="160" />
+        <el-table-column fixed="right" label="操作" width="70">
+          <template #default="scope">
+            <el-button link type="primary" size="small" @click="deleteWork(scope.$index)">
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </el-tab-pane>
     <el-tab-pane label="添加任务" name="add">
 
@@ -24,7 +38,7 @@
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="任务时间" v-if="showTimeSet">
+        <el-form-item label="任务开始时间" v-if="showTimeSet">
           <!-- <el-time-select @change="timeChange"
       v-model="form.time"
       start="01:00"
@@ -32,7 +46,33 @@
       end="23:30"
       placeholder="选择每日任务执行时间"
     /> -->
-          <el-time-picker @change="timeChange" v-model="form.time" placeholder="选择每日任务执行时间" />
+          <!-- <el-time-picker @change="timeChange" v-model="form.time" placeholder="选择每日任务执行时间" /> -->
+          <el-date-picker
+        v-model="form.starttime"
+        type="datetime"
+        placeholder="Pick a Date"
+        format="YYYY/MM/DD hh:mm:ss"
+        value-format="YYYY-MM-DD hh:m:s"
+        @change="timeChange"
+      />
+        </el-form-item>
+        <el-form-item label="任务结束时间" v-if="showTimeSet">
+          <!-- <el-time-select @change="timeChange"
+      v-model="form.time"
+      start="01:00"
+      setp="00:15"
+      end="23:30"
+      placeholder="选择每日任务执行时间"
+    /> -->
+          <!-- <el-time-picker @change="timeChange" v-model="form.time" placeholder="选择每日任务执行时间" /> -->
+          <el-date-picker
+        v-model="form.endtime"
+        type="datetime"
+        placeholder="Pick a Date"
+        format="YYYY/MM/DD hh:mm:ss"
+        value-format="YYYY-MM-DD hh:m:s"
+        @change="timeChange"
+      />
         </el-form-item>
         <el-form-item label="任务模板">
           <el-select v-model="form.templateid" clearable placeholder="Select">
@@ -62,7 +102,8 @@ const activeName = ref('list')
 const form = reactive({
   bindid: '',
   type: '1',
-  time: "",
+  starttime: "",
+  endtime:'',
   templateid: ''
 })
 const templates = reactive<any[]>([]);
@@ -80,16 +121,17 @@ const typeChange = (value: any) => {
   // console.log(value)
 }
 const timeChange = (value: any) => {
-  // console.log("time:")
-  // console.log(value)
+  console.log("time:")
+  console.log(value)
 }
-const works = reactive<any[]>([]);
+// const works = reactive<any[]>([]);
 onBeforeMount(() => {
   //   console.log(store.Authorization)
   // getWorks()
   // console.log("worktest:")
   // console.log(store.Binds)
   getTemplates()
+  getWorks()
 })
 
 const getTemplates = () => {
@@ -113,20 +155,20 @@ const getTemplates = () => {
   })
 }
 
+const deleteWork = (index:number) =>{
+
+}
+
 const getWorks = () => {
   axios({
     method: 'get',
-    url: '/v2/getbinds',
+    url: '/v2/getworks',
     headers: { Authorization: 'Bearer ' + store.Authorization }
   }).then(function (response) {
     // console.log(typeof(response))
     // console.log(response)
     if (response) {
-      works.slice(0)
-      let r_binds = response.data['data']['binds']
-      r_binds.forEach((e: any) => {
-        works.push(e)
-      });
+      store.Works = response.data['data']['works']
       // console.log(r_binds)
     } else {
       // router.replace('/login')
@@ -161,7 +203,28 @@ const onAddWork = () => {
     }
     })
   }else{
-    console.log("pass")
+    axios({
+      method:'get',
+      url:'/v2/addwork',
+      headers: { Authorization: 'Bearer ' + store.Authorization },
+      params:{'bindid':form.bindid,'templateid':form.templateid,'starttime':form.starttime,'endtime':form.endtime}
+    }).then(res=>{
+      console.log(res)
+      const code = res.data.code
+    if (code != 0) {
+      ElMessage({
+        message: res.data.message,
+        grouping: true,
+        type: 'error',
+      })
+    } else {
+      ElMessage({
+        message: "添加任务成功",
+        grouping: true,
+        type: 'success',
+      })
+    }
+    })
   }
 
   

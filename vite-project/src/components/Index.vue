@@ -63,6 +63,8 @@
 <script lang="ts" setup>
 import { useRoute, useRouter } from 'vue-router'
 import { store } from '../store'
+import axios from '../defaultaxios'
+import {onBeforeMount} from 'vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -70,6 +72,33 @@ const route = useRoute()
 const toLoginOut = () => {
     router.push('/login')
 }
+
+onBeforeMount(() => {
+  //   console.log(store.Authorization)
+  getBinds()
+})
+
+const getBinds = () => {
+  axios({
+    method: 'get',
+    url: '/v2/getbinds',
+    headers: { Authorization: 'Bearer ' + store.Authorization }
+  }).then(function (response) {
+    // console.log(typeof(response))
+    // console.log(response)
+    if (response) {
+      const r_binds = response.data['data']['binds']
+      store.Binds = r_binds
+      // console.log(r_binds)
+    } else {
+      // router.replace('/login')
+    }
+
+    // UserInfo.email="123"
+    // console.log(UserInfo)
+  })
+}
+
 
 </script>
 

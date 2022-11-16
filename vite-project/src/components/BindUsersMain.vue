@@ -1,8 +1,8 @@
 <template>
   <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="列表" name="list">
-      
-      <el-table table-layout="auto" :data="binds" border style="width: 100%">
+      <el-button type="primary" @click="getBinds" style="justify-content:flex-end">刷新</el-button>
+      <el-table table-layout="auto" :data="store.Binds" border style="width: 100%;margin-top: 20px;">
         <el-table-column type="index"></el-table-column>
         <el-table-column prop="bindid" label="用户id" width="180" />
         <el-table-column prop="status" label="状态" width="70" />
@@ -53,11 +53,16 @@ const form = reactive({
   password: '',
   notes: '',
 })
-const binds = reactive<any[]>([]);
+
+
+
+// const binds = reactive<any[]>([]);
+
+// const binds:any = store.Binds
 
 onBeforeMount(() => {
   //   console.log(store.Authorization)
-  getBinds()
+  // getBinds()
 })
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {
@@ -69,7 +74,7 @@ const deleteBind = (index: number) => {
     url:'/v2/delbind',
     headers: { Authorization: 'Bearer ' + store.Authorization},
     params: {
-      bindid: binds[index].bindid
+      bindid: store.Binds[index].bindid
     },
   }).then(function (response){
     if(response.data['code']==0){
@@ -78,10 +83,10 @@ const deleteBind = (index: number) => {
         grouping: true,
         type: 'success',
       })
-      binds.splice(index, 1)
+      store.Binds.splice(index, 1)
     }else{
       ElMessage({
-        message: "删除失败",
+        message: "删除失败,"+response.data['msg'],
         grouping: true,
         type: 'error',
       })
@@ -153,13 +158,7 @@ const getBinds = () => {
     // console.log(typeof(response))
     // console.log(response)
     if (response) {
-      binds.slice(0)
-      const r_binds = response.data['data']['binds']
-      store.Binds = r_binds
-      r_binds.forEach((e: any) => {
-        binds.push(e)
-      });
-      // console.log(r_binds)
+      store.Binds=response.data['data']['binds']
     } else {
       // router.replace('/login')
     }
