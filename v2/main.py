@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import time
 from typing import List, Optional, Union
-from fastapi import FastAPI, status, Request,Depends,HTTPException
+from fastapi import FastAPI, status, Request,Depends,HTTPException,Query
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -28,6 +28,8 @@ def init_jobs(jobs:List[Job]):
     workids = works_dict.keys()
     for job in jobs:
         jobid = job.id
+        print("runtime:")
+        print(job.next_run_time)
         if jobid not in workids:
             job.remove()
             continue
@@ -228,6 +230,29 @@ async def delbind(bindid:str,auth = Depends(get_current_user_by_email)):
     if res['code']!=0:
         return {'code':res['code'],'msg':res['msg']}
     return {'code':0,'msg':"删除绑定成功"}   
+
+@app.get('/v2/delwork')
+async def delwork(workid:str,auth = Depends(get_current_user_by_email)):
+    email = auth['email']
+    res =  await tools.del_work(email=email,workid=workid)
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    return {'code':0,'msg':"删除任务成功"}  
+
+@app.get('/v2/updateworkstatus') 
+async def updatework(workid:str,status:int,auth = Depends(get_current_user_by_email)):
+    email = auth['email']
+    if status not in [1,2]:
+        return {'code':1,'msg':"提交参数错误"}
+
+    if status==1:
+        global scheduler
+        res =  await tools.update_work_status(email=email,workid=workid,status=status,scheduler=scheduler)
+    else:
+        res =  await tools.update_work_status(email=email,workid=workid,status=status)
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    return {'code':0,'msg':"更新任务状态成功"}
 
 @app.get('/v2/gettemplates')
 async def gettemplates(auth = Depends(get_current_user_by_email)):

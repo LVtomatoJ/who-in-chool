@@ -223,14 +223,79 @@ const getTemplates = () => {
   })
 }
 
-const deleteWork = (worid:string) =>{
-  
+const deleteWork = (workid:string) =>{
+  axios({
+      method:'get',
+      url:'/v2/delwork',
+      headers: { Authorization: 'Bearer ' + store.Authorization },
+      params:{'workid':workid}
+    }).then(res=>{
+      console.log(res)
+      const code = res.data.code
+    if (code != 0) {
+      ElMessage({
+        message: res.data.message,
+        grouping: true,
+        type: 'error',
+      })
+    } else {
+      ElMessage({
+        message: "删除成功",
+        grouping: true,
+        type: 'success',
+      })
+    }
+    })
 }
 const runWork = (workid:string) =>{
-
+  axios({
+      method:'get',
+      url:'/v2/updateworkstatus',
+      headers: { Authorization: 'Bearer ' + store.Authorization },
+      params:{'workid':workid,'status':1}
+    }).then(res=>{
+      console.log(res)
+      const code = res.data.code
+    if (code != 0) {
+      ElMessage({
+        message: res.data.message,
+        grouping: true,
+        type: 'error',
+      })
+    } else {
+      ElMessage({
+        message: "启动任务成功",
+        grouping: true,
+        type: 'success',
+      })
+    }
+    })
+    getWorks()
 }
 const stopWork = (workid:string) =>{
-
+  axios({
+      method:'get',
+      url:'/v2/updateworkstatus',
+      headers: { Authorization: 'Bearer ' + store.Authorization },
+      params:{'workid':workid,'status':2}
+    }).then(res=>{
+      console.log(res)
+      const code = res.data.code
+    if (code != 0) {
+      ElMessage({
+        message: res.data.message,
+        grouping: true,
+        type: 'error',
+      })
+    } else {
+      ElMessage({
+        message: "暂停任务成功",
+        grouping: true,
+        type: 'success',
+      })
+    }
+    })
+    getWorks()
 }
 
 const getWorks = () => {

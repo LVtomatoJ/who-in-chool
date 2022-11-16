@@ -1,5 +1,6 @@
 import random
 import string
+from typing import Union
 import tinydbtools as dbtools
 import nettolls
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -151,6 +152,38 @@ async def del_bind(email:str,bindid:str):
     if delbinds==[]:
         return {'code':504,'msg':"删除结果为空"}
     return {'code':0}
+
+async def del_work(email:str,workid:str):
+    if not dbtools.check_user_exist_by_email(email=email):
+        return {'code':502,'msg':'用户不存在'}
+    work = dbtools.get_work(workid=workid)
+    if work==None:
+        return {'code':410,'msg':"不存在任务"}
+    if work['email']!=email:
+        return {'code':409,'msg':"权限不足"}
+    delworks = dbtools.del_work(workid=workid)
+    if delworks==[]:
+        return {'code':504,'msg':"删除结果为空"}
+    return {'code':0}
+
+async def update_work_status(email:str,workid:str,status:int,scheduler:Union[BackgroundScheduler,None]=None):
+    if not dbtools.check_user_exist_by_email(email=email):
+        return {'code':502,'msg':'用户不存在'}
+    work = dbtools.get_work(workid=workid)
+    if work==None:
+        return {'code':410,'msg':"不存在任务"}
+    if work['email']!=email:
+        return {'code':409,'msg':"权限不足"}
+    if status==1:
+        if scheduler.get_job(job_id=workid)==None:
+            
+            scheduler.resume_job(job_id=workid)
+            return {'code':0}
+    updateworks = dbtools.update_work_status(workid=workid,status=status)
+    if updateworks==[]:
+        return {'code':507,'msg':"更新结果为空"}
+    return {'code':0}
+
 
 async def get_templates(email:str):
     user = dbtools.get_user_by_email(email=email)
