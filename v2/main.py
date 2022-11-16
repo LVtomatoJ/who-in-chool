@@ -289,10 +289,19 @@ async def getworkd(auth = Depends(get_current_user_by_email)):
 
 
 @app.get('/v2/getallworks')
-async def getallworks():
+async def printallworks():
     global scheduler
     scheduler.print_jobs()
     return{0}
+
+
+@app.get('/v2/getworklogs')
+async def getworks(auth = Depends(get_current_user_by_email)):
+    email = auth['email']
+    res = await tools.get_worklogs(email=email)
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    return {'code':0,'msg':"任务日志获取成功",'data':{'worklogs':res['data']['worklogs']}}   
 
 # def printtime(name:str):
 #     print("lalala")

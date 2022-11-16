@@ -72,4 +72,5 @@ def doHeat(jwsession:str,data:Document):
             return {'code':'506','msg':"请求未知错误",'data':{'code':code}}
         return {'code':0,'msg':"网络请求成功"}
     except Exception as e:
+        print(e.args)
         return {'code':503,"msg":"网络请求异常"}

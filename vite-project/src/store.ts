@@ -13,4 +13,5 @@ export const store = reactive({
     },
     Binds:<any[]>[],
     Works:<any[]>[],
+    WorkLogs:<any[]>[],
 })

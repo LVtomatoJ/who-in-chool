@@ -1,5 +1,6 @@
 import random
 import string
+import time
 from typing import Union
 import tinydbtools as dbtools
 import nettolls
@@ -221,9 +222,6 @@ async def quick_work(email:str,templateid:str,bindid:str):
 
 
 
-def printhaha():
-    print('hahahah')
-
 
 def long_work(email:str,bindid:str,templateid:str,workid:str):
 
@@ -231,22 +229,24 @@ def long_work(email:str,bindid:str,templateid:str,workid:str):
     work = dbtools.get_work(workid=workid)
     if work==None:
         return
-
     #参数缺失 删除任务后停止
     user = dbtools.get_user_by_email(email=email)
     if user==None:
         r = dbtools.del_work(workid=workid)
         #add log
+        docid = dbtools.add_work_log(email=email,bindid=bindid,workid=workid,templateid=templateid,time=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time())),code=502,msg="定时任务执行失败【用户不存在】,已暂停运行")
         return
     bind = dbtools.get_bind(bindid=bindid)
     if bind==None:
         r = dbtools.del_work(workid=workid)
         #add log
+        docid = dbtools.add_work_log(email=email,bindid=bindid,workid=workid,templateid=templateid,time=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time())),code=406,msg="定时任务执行失败【绑定用户不存在】,已暂停运行")
         return
     template = dbtools.get_template(templateid=templateid)
     if template==None:
         r = dbtools.del_work(workid=workid)
         #add log
+        docid = dbtools.add_work_log(email=email,bindid=bindid,workid=workid,templateid=templateid,time=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time())),code=407,msg="定时任务执行失败【模板不存在】,已暂停运行")
         return
 
     # print("3")
@@ -270,15 +270,16 @@ def long_work(email:str,bindid:str,templateid:str,workid:str):
             #work status 2:暂停
             dbtools.update_work_status(workid=workid,status=2)
             #add log
+            docid = dbtools.add_work_log(email=email,bindid=bindid,workid=workid,templateid=templateid,time=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time())),code=505,msg="定时任务执行失败【绑定失效】,已暂停运行")
             return
         else:
             dbtools.update_work_status(workid=workid,status=2)
-            #add log
+            docid = dbtools.add_work_log(email=email,bindid=bindid,workid=workid,templateid=templateid,time=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time())),code=code,msg="定时任务执行失败【"+res['msg']+"】,已暂停运行")
             return
+    #执行成功
+    docid = dbtools.add_work_log(email=email,bindid=bindid,workid=workid,templateid=templateid,time=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time())),code=0,msg="定时任务执行成功")
+    return 
 
-    #add success log
-    print('yes!')
-    
 
 async def add_work(email:str,bindid:str,templateid:str,scheduler:BackgroundScheduler,starttime:str,endtime:str):
     user = dbtools.get_user_by_email(email=email)
@@ -297,6 +298,11 @@ async def add_work(email:str,bindid:str,templateid:str,scheduler:BackgroundSched
     workid= ''.join(random.sample(string.ascii_letters + string.digits, 10))
     docid = dbtools.add_work(email=email,bindid=bindid,templateid=templateid,starttime=starttime,endtime=endtime,workid=workid)
     job = scheduler.add_job(long_work,args=(email,bindid,templateid,workid,),trigger='interval',minutes=1,start_date=starttime,end_date=endtime,id=workid)
+    docid = dbtools.add_work_log(email=email,bindid=bindid,workid=workid,templateid=templateid,time=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time())),code=0,msg="添加任务成功")
     return {'code':0}
     
-    
+async def get_worklogs(email:str):
+    if not dbtools.check_user_exist_by_email(email=email):
+        return {'code':502,'msg':"用户不存在"}
+    worklogs = dbtools.get_work_log(email=email)
+    return {'code':0,'data':{'worklogs':worklogs}}

@@ -2,23 +2,33 @@
   <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="列表" name="list">
       <el-button type="primary" @click="getBinds" style="justify-content:flex-end">刷新</el-button>
-      <el-table table-layout="auto" :data="store.Binds" border style="width: 100%;margin-top: 20px;">
+      <el-table table-layout="auto" :data="store.Binds" border style="width: 100%;margin-top: 20px;" :row-class-name="tableRowClassName">
         <el-table-column type="index"></el-table-column>
-        <el-table-column prop="bindid" label="用户id" width="180" />
-        <el-table-column prop="status" label="状态" width="70" />
-        <el-table-column prop="school" label="学校" />
-        <el-table-column prop="notes" label="备注" width="70" />
-        <el-table-column fixed="right" label="操作" width="70">
+        <el-table-column prop="bindid" label="用户id" width="auto" />
+        <el-table-column prop="status" label="状态" width="auto" >
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="deleteBind(scope.$index)">
+          
+          <div v-if="scope.row.status===1">
+            正常
+          </div>
+          <div v-else>
+            失效
+          </div>
+    </template>
+        </el-table-column>
+        <el-table-column prop="school" label="学校" />
+        <el-table-column prop="notes" label="备注" width="auto" />
+        <el-table-column fixed="right" label="操作" width="auto">
+          <template #default="scope">
+            <el-button link type="danger" size="small" @click="deleteBind(scope.$index)">
               删除
             </el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-tab-pane>
-    <el-tab-pane label="添加" name="add" style="text-align:center;">
-      <el-form style="width: 100%;" :model="form" label-width="100px" label-suffix=":">
+    <el-tab-pane label="添加绑定" name="add" style="text-align:center;">
+      <el-form :label-position="labelPosition" style="width: 100%;" :model="form" label-width="100px" label-suffix=":">
         <el-form-item label="手机号">
           <el-input v-model="form.bindid"></el-input>
         </el-form-item>
@@ -31,12 +41,12 @@
         <el-form-item>
           <!-- <el-button type="primary" @click="onSubmit">登录</el-button> -->
           <!-- <el-button type="primary" @click="onHello">Hello</el-button> -->
+          <el-button type="primary" style="width: 70%" @click="onAddBindUser">添加</el-button>
         </el-form-item>
       </el-form>
-      <el-button type="primary" style="width: 70%" @click="onAddBindUser">添加</el-button>
+      
     </el-tab-pane>
   </el-tabs>
-
 
 </template>
 <script lang="ts" setup>
@@ -53,7 +63,31 @@ const form = reactive({
   password: '',
   notes: '',
 })
+const labelPosition = ref('left')
 
+interface Bind {
+
+status: number
+notes: string
+school: string
+bindid: string
+
+}
+
+const tableRowClassName = ({
+  row,
+  rowIndex,
+}: {
+  row: Bind
+  rowIndex: number
+}) => {
+  if (row.status === 2) {
+    return 'warning-row'
+  } else if (row.status ===  1) {
+    return 'success-row'
+  }
+  return ''
+}
 
 
 // const binds = reactive<any[]>([]);
@@ -168,3 +202,12 @@ const getBinds = () => {
   })
 }
 </script>
+
+<style>
+.el-table .warning-row {
+  --el-table-tr-bg-color: var(--el-color-error-light-9);
+}
+.el-table .success-row {
+  --el-table-tr-bg-color: var(--el-color-success-light-9);
+}
+</style>

@@ -1,10 +1,11 @@
 <template>
   <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="列表" name="list">
+      <el-button type="primary" @click="getWorks" style="justify-content:flex-end">刷新</el-button>
       <el-table table-layout="auto" :data="store.Works" border style="width: 100%;margin-top: 20px;" :row-class-name="tableRowClassName">
         <el-table-column type="index"/>
-        <el-table-column prop="workid" label="任务id" width="120" />
-        <el-table-column  label="状态" width="100" >
+        <el-table-column prop="workid" label="任务id"  />
+        <el-table-column  label="状态"  >
           <!-- <template #default="scope">
  
           </template> -->
@@ -16,29 +17,27 @@
             <div v-else>
               暂停
             </div>
-            
-
       </template>
 
       
           </el-table-column>
-        <el-table-column prop="bindid" label="绑定用户id" />
-        <el-table-column prop="starttime" label="开始时间" width="160" />
-        <el-table-column prop="endtime" label="结束时间" width="160" />
+        <el-table-column prop="bindid" label="绑定用户id"  />
+        <el-table-column prop="starttime" label="开始时间"  />
+        <el-table-column prop="endtime" label="结束时间"  />
         
-        <el-table-column header-align="center" fixed="right" label="操作" width="120">
+        <el-table-column  fixed="right" label="操作" width="auto">
           <template #default="scope">
             <!-- <el-button link type="primary" size="small" @click="testeWork(scope.row)">
               test
             </el-button> -->
             <div style="display: flex; align-items: center">
-            <el-button link type="primary" size="small" v-if="scope.row.status===1" @click="stopWork(scope.row.workid)">
+            <el-button link type="warning" size="small" v-if="scope.row.status===1" @click="stopWork(scope.row.workid)">
               暂停
             </el-button>
             <el-button link type="primary" size="small" v-else @click="runWork(scope.row.workid)">
               运行
             </el-button>
-            <el-button link type="primary" size="small" @click="deleteWork(scope.row.workid)">
+            <el-button link type="danger" size="small" @click="deleteWork(scope.row.workid)">
               删除
             </el-button>
           </div>
@@ -50,7 +49,7 @@
     <el-tab-pane label="添加任务" name="add">
 
 
-      <el-form :model="form" label-width="100px" style="margin-top:20px">
+      <el-form :label-position="labelPosition" :model="form" label-width="100px" style="margin-top:20px">
         <el-form-item label="任务账号">
           <el-select v-model="form.bindid" placeholder="选择任务账号">
             <template v-for="bind in store.Binds">
@@ -118,7 +117,41 @@
 
     </el-tab-pane>
     <el-tab-pane label="任务日志" name="log">
-
+      <el-button type="primary" @click="getWorkLogs" style="justify-content:flex-end">刷新</el-button>
+      <el-table table-layout="auto" :data="store.WorkLogs" border style="width: 100%;margin-top: 20px;" :row-class-name="tableRowClassName">
+        <el-table-column type="index"/>
+        <el-table-column prop="time" label="运行时间"  />
+        <!-- <el-table-column  label="code"  >
+          <template #default="scope">
+            <div v-if="scope.row.code===1">
+              运行
+            </div>
+            <div v-else>
+              暂停
+            </div>
+      </template>
+          </el-table-column> -->
+        <el-table-column prop="bindid" label="绑定用户id"  />
+        <el-table-column prop="msg" label="提示"  />
+        <el-table-column prop="workid" label="任务id"  />
+        <el-table-column prop="code" label="返回码"  />
+        <!-- <el-table-column  fixed="right" label="操作" width="auto">
+          <template #default="scope">
+            <div style="display: flex; align-items: center">
+            <el-button link type="warning" size="small" v-if="scope.row.status===1" @click="stopWork(scope.row.workid)">
+              暂停
+            </el-button>
+            <el-button link type="primary" size="small" v-else @click="runWork(scope.row.workid)">
+              运行
+            </el-button>
+            <el-button link type="danger" size="small" @click="deleteWork(scope.row.workid)">
+              删除
+            </el-button>
+          </div>
+          </template>
+        </el-table-column> -->
+        
+      </el-table>
     </el-tab-pane>
   </el-tabs>
 </template>
@@ -130,6 +163,8 @@ import { ref, reactive } from 'vue'
 import type { TabsPaneContext } from 'element-plus'
 import axios from '../defaultaxios';
 import { store } from '../store'
+
+const labelPosition = ref('left')
 
 const activeName = ref('list')
 const form = reactive({
@@ -222,6 +257,7 @@ const getTemplates = () => {
     console.log(templates)
   })
 }
+
 
 const deleteWork = (workid:string) =>{
   axios({
@@ -325,6 +361,18 @@ const getWorks = () => {
     // console.log(UserInfo)
   })
 }
+const getWorkLogs = () => {
+  axios({
+    method: 'get',
+    url: '/v2/getworklogs',
+    headers: { Authorization: 'Bearer ' + store.Authorization }
+  }).then(function (response) {
+      let r_works:any[] = response.data['data']['worklogs']
+      store.WorkLogs = r_works
+  })
+}
+
+
 
 const onAddWork = () => {
   if(form.type=='1'){

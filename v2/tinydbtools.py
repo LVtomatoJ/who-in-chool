@@ -6,6 +6,8 @@ user_db = TinyDB("main.db").table('users')
 bind_db = TinyDB("main.db").table('binds')
 template_db = TinyDB("main.db").table('templates')
 work_db = TinyDB("main.db").table('works')
+bindlog_db = TinyDB("log.db").table('bindlogs')
+worklog_db = TinyDB('log.db').table('worklogs')
 
 Querydb = Query()
 
@@ -112,7 +114,7 @@ def del_bind(bindid:str):
 def del_work(workid:str):
     delworks = work_db.remove(Querydb.workid == workid)
     return delworks
-    
+
 def get_templates():
     templates = template_db.all()
     return templates
@@ -140,3 +142,12 @@ def update_bind_status(bindid:str,status:int):
 def get_all_works():
     works = work_db.all()
     return works
+
+def add_work_log(email:str,bindid:str,workid:str,templateid:str,time:str,code:int,msg:str):
+    doc_id = worklog_db.insert({'email':email,'bindid':bindid,'workid':workid,'templateid':templateid,'time':time,'code':code,'msg':msg})
+    return doc_id
+
+
+def get_work_log(email:str):
+    worklogs = worklog_db.search(Querydb.email==email)
+    return worklogs

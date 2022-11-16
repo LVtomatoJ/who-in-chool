@@ -6,14 +6,14 @@
                     <span>登录</span>
                 </div>
             </template>
-            <div class="common-layout" style="width:500px ;">
+            <div class="common-layout" style="width:auto ;">
     
                 <el-form :model="form" label-width="70px" label-suffix=":">
                     <el-form-item label="用户名">
-                        <el-input v-model="form.username"></el-input>
+                        <el-input style="width:auto ;" v-model="form.username"></el-input>
                     </el-form-item>
                     <el-form-item label="密码">
-                        <el-input type="password" v-model="form.password" show-password></el-input>
+                        <el-input style="width:auto ;" type="password" v-model="form.password" show-password></el-input>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="onSubmit">登录</el-button>

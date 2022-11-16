@@ -4,6 +4,7 @@
     title="账号信息"
     :column="2"
     border
+    direction="vertical"
   >
     <template #extra>
       <el-button type="primary" @click="getdUserInfo">刷新</el-button>
@@ -15,7 +16,7 @@
             &nbsp邮箱
         </div>
       </template>
-      {{UserInfo.email}}
+      {{store.UserInfo.email}}
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
@@ -26,7 +27,7 @@
           &nbsp等级
         </div>
       </template>
-      {{UserInfo.level}}级
+      {{store.UserInfo.level}}级
     </el-descriptions-item>
 
     <el-descriptions-item>
@@ -35,10 +36,10 @@
           <el-icon>
             <tickets />
           </el-icon>
-          &nbsp最大绑定数量
+          &nbsp最大绑定
         </div>
       </template>
-      {{UserInfo.maxbindnum}}个
+      {{store.UserInfo.maxbindnum}}个
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
@@ -46,10 +47,10 @@
           <el-icon >
             <office-building />
           </el-icon>
-          &nbsp最大任务数量
+          &nbsp最大任务
         </div>
       </template>
-     {{UserInfo.maxworknum}}个
+     {{store.UserInfo.maxworknum}}个
     </el-descriptions-item>
 
   </el-descriptions>
@@ -62,13 +63,13 @@ import { onBeforeMount, reactive ,ref} from 'vue'
 import router from '../router/router';
 const Authorization = store.Authorization
 // let UserInfo = ref(store.UserInfo)
-let UserInfo = reactive({
-    email:"",
-    openid:'demo',
-    level:2,
-    maxbindnum:1,
-    maxworknum:1
-})
+// let UserInfo = reactive({
+//     email:"",
+//     openid:'demo',
+//     level:2,
+//     maxbindnum:1,
+//     maxworknum:1
+// })
 
 onBeforeMount(() => {
     //   console.log(store.Authorization)
@@ -84,10 +85,8 @@ const getdUserInfo = ()=>{
         // console.log(typeof(response))
         // console.log(response)
         if (response){
-            UserInfo.email = response.data['data']['user']['email']
-            UserInfo.level = response.data['data']['user']['level']
-            UserInfo.maxbindnum = response.data['data']['user']['maxbindnum']
-            UserInfo.maxworknum = response.data['data']['user']['maxworknum']
+
+            store.UserInfo=response.data['data']['user']
         }else{
             // router.replace('/login')
         }
