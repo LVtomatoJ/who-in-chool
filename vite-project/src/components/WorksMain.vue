@@ -80,8 +80,8 @@
         v-model="form.starttime"
         type="datetime"
         placeholder="Pick a Date"
-        format="YYYY/MM/DD hh:mm:ss"
-        value-format="YYYY-MM-DD hh:m:s"
+        format="YYYY/MM/DD HH:mm:ss"
+        value-format="YYYY-MM-DD HH:m:s"
         @change="timeChange"
       />
         </el-form-item>

@@ -43,10 +43,9 @@
 // const password = ref('')
 import { onBeforeMount, reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import axios from 'axios'
+import axios from '../defaultaxios'
 import { ElMessage } from 'element-plus'
 import { store } from '../store.js'
-
 onBeforeMount(() => {
     //   console.log(store.Authorization)
     store.setAuthorization('')
@@ -77,7 +76,7 @@ const onSubmit = () => {
     } else {
         axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
         axios({
-            method: 'post', url: 'http://127.0.0.1:8000/token',
+            method: 'post', url: '/token',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             data: {
                 grant_type: "",
