@@ -5,6 +5,7 @@ from typing import Union
 import tinydbtools as dbtools
 import nettolls
 from apscheduler.schedulers.background import BackgroundScheduler
+import mail
 async def check_user_exist_by_email(email:str)->bool:
     """检查是否存在email对应用户
 
@@ -235,18 +236,21 @@ def long_work(email:str,bindid:str,templateid:str,workid:str):
         r = dbtools.del_work(workid=workid)
         #add log
         docid = dbtools.add_work_log(email=email,bindid=bindid,workid=workid,templateid=templateid,time=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time())),code=502,msg="定时任务执行失败【用户不存在】,已暂停运行")
+        mail.send_async_mail_prepare(title='【谁在校园】您有任务失败啦，快去日志检查检查吧',user_email=email)
         return
     bind = dbtools.get_bind(bindid=bindid)
     if bind==None:
         r = dbtools.del_work(workid=workid)
         #add log
         docid = dbtools.add_work_log(email=email,bindid=bindid,workid=workid,templateid=templateid,time=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time())),code=406,msg="定时任务执行失败【绑定用户不存在】,已暂停运行")
+        mail.send_async_mail_prepare(title='【谁在校园】您有任务失败啦，快去日志检查检查吧',content='',user_email=email)
         return
     template = dbtools.get_template(templateid=templateid)
     if template==None:
         r = dbtools.del_work(workid=workid)
         #add log
         docid = dbtools.add_work_log(email=email,bindid=bindid,workid=workid,templateid=templateid,time=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time())),code=407,msg="定时任务执行失败【模板不存在】,已暂停运行")
+        mail.send_async_mail_prepare(title='【谁在校园】您有任务失败啦，快去日志检查检查吧',content='',user_email=email)
         return
 
     # print("3")
@@ -271,10 +275,12 @@ def long_work(email:str,bindid:str,templateid:str,workid:str):
             dbtools.update_work_status(workid=workid,status=2)
             #add log
             docid = dbtools.add_work_log(email=email,bindid=bindid,workid=workid,templateid=templateid,time=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time())),code=505,msg="定时任务执行失败【绑定失效】,已暂停运行")
+            mail.send_async_mail_prepare(title='【谁在校园】您有任务失败啦，快去日志检查检查吧',content='',user_email=email)
             return
         else:
             dbtools.update_work_status(workid=workid,status=2)
             docid = dbtools.add_work_log(email=email,bindid=bindid,workid=workid,templateid=templateid,time=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time())),code=code,msg="定时任务执行失败【"+res['msg']+"】,已暂停运行")
+            mail.send_async_mail_prepare(title='【谁在校园】您有任务失败啦，快去日志检查检查吧',content='',user_email=email)
             return
     #执行成功
     docid = dbtools.add_work_log(email=email,bindid=bindid,workid=workid,templateid=templateid,time=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time())),code=0,msg="定时任务执行成功")

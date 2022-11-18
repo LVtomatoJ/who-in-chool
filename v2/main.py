@@ -88,14 +88,8 @@ class Templates(BaseModel):
 #     allow_headers=["*"]
 # )
 
-origins = [
-    "http://localhost",
-    "http://localhost:3333",
-    "http://localhost:5173",
-    "http://127.0.0.1",
-    "http://127.0.0.1:3333",
-    "http://127.0.0.1:5173",
-]
+origins = ["http://127.0.0.1:5173/",
+    "http://127.0.0.1:5173"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -105,7 +99,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-SECRET_KEY ='5d8788a74ba363c1b08329363b42f30c75d3cb762714aa32761cb0e214b5474d'
+SECRET_KEY = '5d8788a74ba363c1b08329363b42f30c75d3cb762714aa32761cb0e214b54712'
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 120
 

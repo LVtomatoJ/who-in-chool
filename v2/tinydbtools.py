@@ -136,7 +136,7 @@ def update_work_status(workid:str,status:int):
     return works
 
 def update_bind_status(bindid:str,status:int):
-    binds = work_db.update({'status':status},Querydb.bindid==bindid)
+    binds = binds.update({'status':status},Querydb.bindid==bindid)
     return binds
 
 def get_all_works():
@@ -151,3 +151,5 @@ def add_work_log(email:str,bindid:str,workid:str,templateid:str,time:str,code:in
 def get_work_log(email:str):
     worklogs = worklog_db.search(Querydb.email==email)
     return worklogs
+
+update_bind_status('15389064060',2)
