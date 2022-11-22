@@ -229,6 +229,8 @@ const form = reactive({
 const templates = reactive<any[]>([]);
 const showTimeSet = ref(false)
 const handleClick = (tab: TabsPaneContext, event: Event) => {
+  form.templateid=""
+  console.log("123")
   // console.log(tab, event)
 }
 const typeChange = (value: any) => {
