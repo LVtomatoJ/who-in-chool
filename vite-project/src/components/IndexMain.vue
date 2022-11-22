@@ -73,7 +73,7 @@ const Authorization = store.Authorization
 
 onBeforeMount(() => {
     //   console.log(store.Authorization)
-    getdUserInfo()
+    // getdUserInfo()
 })
 
 const getdUserInfo = ()=>{

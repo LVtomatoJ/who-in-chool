@@ -42,12 +42,15 @@
                             </el-icon>
                             <span>任务管理</span>
                         </el-menu-item>
-                        <el-menu-item index="admin" disabled>
-                            <el-icon>
-                                <setting />
-                            </el-icon>
-                            <span>管理</span>
-                        </el-menu-item>
+                        <template v-if="store.UserInfo.level==999">
+                        
+                            <el-menu-item index="admin">
+                                <el-icon>
+                                    <setting />
+                                </el-icon>
+                                <span>管理</span>
+                            </el-menu-item>
+                        </template>
                     </el-menu>
 
                 </el-aside>
@@ -84,6 +87,7 @@ const toLoginOut = () => {
 onBeforeMount(() => {
     //   console.log(store.Authorization)
     getBinds()
+    getdUserInfo()
 })
 
 const getBinds = () => {
@@ -107,6 +111,25 @@ const getBinds = () => {
     })
 }
 
+const getdUserInfo = ()=>{
+    axios({
+        method: 'get',
+        url: '/v2/getuserinfo',
+        headers: { Authorization: 'Bearer ' + store.Authorization }
+    }).then(function (response) {
+        // console.log(typeof(response))
+        // console.log(response)
+        if (response){
+
+            store.UserInfo=response.data['data']['user']
+        }else{
+            // router.replace('/login')
+        }
+          
+            // UserInfo.email="123"
+        // console.log(UserInfo)
+    })
+}
 
 </script>
 

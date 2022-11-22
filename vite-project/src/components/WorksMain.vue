@@ -154,6 +154,57 @@
         
       </el-table>
     </el-tab-pane>
+    <el-tab-pane label="签到" name="sign">
+      <el-form :label-position="labelPosition" :model="form" label-width="100px" style="margin-top:20px">
+        <el-form-item label="任务账号">
+          <el-select v-model="form.bindid" placeholder="选择任务账号">
+            <template v-for="bind in store.Binds">
+              <el-option v-bind:label="bind['bindid']" v-bind:value="bind['bindid']" />
+            </template>
+
+          </el-select>
+        </el-form-item>
+        <el-form-item label="任务类型">
+
+          <el-radio-group v-model="form.type" @change="typeChange">
+            <el-radio border label='1'>立即执行</el-radio>
+            <el-radio border label='2' :disabled="true">每周执行</el-radio>
+          </el-radio-group>
+        </el-form-item>
+
+        <el-form-item label="任务开始时间" v-if="showTimeSet">
+          <el-date-picker
+        v-model="form.starttime"
+        type="datetime"
+        placeholder="Pick a Date"
+        format="YYYY/MM/DD HH:mm:ss"
+        value-format="YYYY-MM-DD HH:m:s"
+        @change="timeChange"
+      />
+        </el-form-item>
+        <el-form-item label="任务结束时间" v-if="showTimeSet">
+          <el-date-picker
+        v-model="form.endtime"
+        type="datetime"
+        placeholder="Pick a Date"
+        format="YYYY/MM/DD hh:mm:ss"
+        value-format="YYYY-MM-DD hh:m:s"
+        @change="timeChange"
+      />
+        </el-form-item>
+        <el-form-item label="任务模板">
+          <el-select v-model="form.templateid" clearable placeholder="Select">
+            
+            <el-option v-for="template in templates" :key="template.templateid" :label="template.name"
+              :value="template.templateid" :disabled="template.type!=2?true:false"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onAddSignWork">添加/执行任务</el-button>
+        </el-form-item>
+      </el-form>
+
+    </el-tab-pane>
   </el-tabs>
 </template>
 
@@ -373,7 +424,33 @@ const getWorkLogs = () => {
   })
 }
 
+const onAddSignWork=()=>{
+  if(form.type=='1'){
+    axios({
+      method:'get',
+      url:'/v2/dolatestsign',
+      headers: { Authorization: 'Bearer ' + store.Authorization },
+      params:{'bindid':form.bindid,'templateid':form.templateid}
+    }).then(res=>{
+      console.log(res)
+      const code = res.data.code
+    if (code != 0) {
+      ElMessage({
+        message: res.data.msg,
+        grouping: true,
+        type: 'error',
+      })
+    } else {
+      ElMessage({
+        message: "执行成功",
+        grouping: true,
+        type: 'success',
+      })
+    }
+    })}else{
 
+    }
+}
 
 const onAddWork = () => {
   if(form.type=='1'){

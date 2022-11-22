@@ -74,7 +74,6 @@ async def add_default_user(email:str,password:str,openid:str)->dict:
         email (str): 邮箱
         password (str): 密码
         open_id (str): wechat_openid
-
     Returns:
         dict: {code:[0:成功,403:已存在用户]}
     """
