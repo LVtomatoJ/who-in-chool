@@ -21,6 +21,8 @@ async def check_user_exist_by_email(email:str)->bool:
         return {'code':0}
     return {'code':502}
 
+
+
 async def check_user_exist_by_openid(openid:str)->bool:
     """检查是否存在openid对应用户
 
@@ -331,3 +333,30 @@ async def get_worklogs(email:str):
         return {'code':502,'msg':"用户不存在"}
     worklogs = dbtools.get_work_log(email=email)
     return {'code':0,'data':{'worklogs':worklogs}}
+
+async def do_latest_sign(email:str,bindid:str,templateid:str):
+    user = dbtools.get_user_by_email(email=email)
+    if user==None:
+        return {'code':502,'msg':"用户不存在"}
+    bind = dbtools.get_bind(bindid=bindid)
+    template = dbtools.get_template(templateid=templateid)
+    if bind==None:
+        return {'code':406,'msg':'绑定用户不存在'}
+    if template==None:
+        return {'code':407,'msg':"模板不存在"}
+    if bind['email']!=email:
+        return {'code':409,'msg':"权限不足"}
+    jwsession = bind['jwsession']
+    r = nettolls.getSignList(jwsession=jwsession)
+    if r['code']!=0:
+        return {'code':r['code'],'msg':r['msg']}
+    latestsign = r['data']['signlist'][0]
+    id = latestsign['id']
+    logId = latestsign['logId']
+    data = template['data']
+    data['signId'] = id
+    data['id'] = logId
+    res = nettolls.doSign(jwsession='67da382ba8df4d7fb953c633d6d9ff12',data=data)
+    if r['code']!=0:
+        return {'code':r['code'],'msg':r['msg']}
+    return {'code':0,'msg':"签到成功"}

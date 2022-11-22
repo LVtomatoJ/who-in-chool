@@ -71,6 +71,7 @@ class Template(BaseModel):
     name:str
     status:int
     school:str
+    type:int
 
 class Templates(BaseModel):
     templates:list[Template]
@@ -263,6 +264,14 @@ async def quckwork(bindid:str,templateid:str,auth = Depends(get_current_user_by_
     if res['code']!=0:
         return {'code':res['code'],'msg':res['msg']}
     return {'code':0,'msg':"任务执行成功"}  
+
+@app.get('/v2/dolatestsign')
+async def dolatestsign(bindid:str,templateid:str,auth = Depends(get_current_user_by_email)):
+    email = auth['email']
+    res = await tools.do_latest_sign(email=email,templateid=templateid,bindid=bindid)
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    return {'code':0,'msg':"签到成功"}  
 
 @app.get('/v2/addwork')
 async def addwork(bindid:str,templateid:str,starttime:str,endtime:str,auth = Depends(get_current_user_by_email)):
