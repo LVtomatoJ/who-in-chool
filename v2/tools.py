@@ -131,6 +131,25 @@ async def add_bind(email:str,bindid:str,password:str,notes:str):
     doc_id = dbtools.add_bind(email=email,bindid=bindid,password=password,jwsession=jwsession,notes=notes,school=school)
     return {'code':0}
 
+async def rebind(email:str,bindid:str):
+    user = dbtools.get_user_by_email(email=email)
+    if user==None:
+        return {'code':502,'msg':"用户不存在"}
+    bind = dbtools.get_bind(bindid=bindid)
+    if bind==None:
+        return {'code':406,"msg":"绑定用户不存在"}
+    if bind['email']!=email:
+        return {'code':409,"msg":"权限不足"}
+    
+    password = bind["password"]
+    bindid = bind['bindid']
+    res = nettolls.getJwsession(bindid=bindid,password=password)
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    jwsession = res['data']['jwsession']
+    newbind = dbtools.update_bind_jwsession(bindid=bindid,jwsession=jwsession)
+    return {'code':0,'msg':"更新绑定成功"}
+
 async def get_binds(email:str):
     user = dbtools.get_user_by_email(email=email)
     if user==None:
@@ -303,7 +322,7 @@ async def add_work(email:str,bindid:str,templateid:str,scheduler:BackgroundSched
         return {'code':408,'msg':"任务数量超过限制"}
     workid= ''.join(random.sample(string.ascii_letters + string.digits, 10))
     docid = dbtools.add_work(email=email,bindid=bindid,templateid=templateid,starttime=starttime,endtime=endtime,workid=workid)
-    job = scheduler.add_job(long_work,args=(email,bindid,templateid,workid,),trigger='interval',minutes=1,start_date=starttime,end_date=endtime,id=workid)
+    job = scheduler.add_job(long_work,args=(email,bindid,templateid,workid,),trigger='interval',hours=24,start_date=starttime,end_date=endtime,id=workid)
     docid = dbtools.add_work_log(email=email,bindid=bindid,workid=workid,templateid=templateid,time=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time())),code=0,msg="添加任务成功")
     return {'code':0}
     

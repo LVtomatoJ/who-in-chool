@@ -297,6 +297,16 @@ async def getworks(auth = Depends(get_current_user_by_email)):
         return {'code':res['code'],'msg':res['msg']}
     return {'code':0,'msg':"任务日志获取成功",'data':{'worklogs':res['data']['worklogs']}}   
 
+
+@app.get('/v2/rebind')
+async def rebind(bindid:str,auth = Depends(get_current_user_by_email)):
+    email = auth['email']
+    res = await tools.rebind(email=email,bindid=bindid)
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    return {'code':0,'msg':"刷新绑定成功"}   
+
+
 # def printtime(name:str):
 #     print("lalala")
 #     return 0

@@ -23,6 +23,9 @@
             <el-button link type="danger" size="small" @click="deleteBind(scope.$index)">
               删除
             </el-button>
+            <el-button link type="success" size="small" @click="reBind(scope.$index)">
+              刷新
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -128,6 +131,34 @@ const deleteBind = (index: number) => {
   })
   // binds.splice(index, 1)
 }
+
+const reBind = (index: number) => {
+  axios({
+    method: 'get',
+    url:'/v2/rebind',
+    headers: { Authorization: 'Bearer ' + store.Authorization},
+    params: {
+      bindid: store.Binds[index].bindid
+    },
+  }).then(function (response){
+    if(response.data['code']==0){
+      ElMessage({
+        message: "刷新绑定成功",
+        grouping: true,
+        type: 'success',
+      })
+      // store.Binds.splice(index, 1)
+    }else{
+      ElMessage({
+        message: "刷新失败,"+response.data['msg'],
+        grouping: true,
+        type: 'error',
+      })
+    }
+  })
+  // binds.splice(index, 1)
+}
+
 const onAddBindUser = () => {
   console.log("start")
   axios({

@@ -139,6 +139,9 @@ def update_bind_status(bindid:str,status:int):
     binds = bind_db.update({'status':status},Querydb.bindid==bindid)
     return binds
 
+def update_bind_jwsession(bindid:str,jwsession):
+    binds = bind_db.update({'status':1,"jwsession":jwsession},Querydb.bindid==bindid)
+
 def get_all_works():
     works = work_db.all()
     return works
