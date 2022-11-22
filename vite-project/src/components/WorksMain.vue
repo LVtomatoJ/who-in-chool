@@ -105,8 +105,9 @@
         </el-form-item>
         <el-form-item label="任务模板">
           <el-select v-model="form.templateid" clearable placeholder="Select">
+            
             <el-option v-for="template in templates" :key="template.templateid" :label="template.name"
-              :value="template.templateid" />
+              :value="template.templateid" :disabled="template.type!=1?true:false"/>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -386,7 +387,7 @@ const onAddWork = () => {
       const code = res.data.code
     if (code != 0) {
       ElMessage({
-        message: res.data.message,
+        message: res.data.msg,
         grouping: true,
         type: 'error',
       })
@@ -409,7 +410,7 @@ const onAddWork = () => {
       const code = res.data.code
     if (code != 0) {
       ElMessage({
-        message: res.data.message,
+        message: res.data.msg,
         grouping: true,
         type: 'error',
       })
