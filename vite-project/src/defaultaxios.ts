@@ -6,7 +6,7 @@ import {store} from './store'
 // const router = useRouter()
 // const route = useRoute()
 
-axios.defaults.baseURL = 'http://127.0.0.1:8000/'
+axios.defaults.baseURL = 'http://127.0.0.1:8888/'
 axios.defaults.withCredentials = true
 // axios.defaults.headers.common['Authorization'] = 'Bearer' + store.Authorization;
 // function redirectLogin () {
