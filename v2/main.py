@@ -92,13 +92,13 @@ class Templates(BaseModel):
 origins = ["http://127.0.0.1:5173/",
     "http://127.0.0.1:5173"]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=origins,
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 SECRET_KEY = '5d8788a74ba363c1b08329363b42f30c75d3cb762714aa32761cb0e214b54712'
 ALGORITHM = "HS256"
@@ -169,7 +169,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         content=jsonable_encoder({"code": 1, "message": "提交参数错误"})
     )
 
-@app.post("/token", response_model=Token)
+@app.post("/v2/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     # user = authenticate_user(fake_users_db, form_data.username, form_data.password)
     # print("11111")
@@ -178,7 +178,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 
     r = await tools.check_user_email_password(email=form_data.username,password=form_data.password)
     if r['code']!=0:
-        return r
+        return {'code':r['code'],"access_token":"","token_type":""}
     print(r)
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
@@ -315,6 +315,14 @@ async def rebind(bindid:str,auth = Depends(get_current_user_by_email)):
         return {'code':res['code'],'msg':res['msg']}
     return {'code':0,'msg':"刷新绑定成功"}   
 
+
+@app.get("/v2/admin/getusers")
+async def getusers(bindid:str,auth = Depends(get_current_user_by_email)):
+    email = auth['email']
+    res = await tools.rebind(email=email,bindid=bindid)
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    return {'code':0,'msg':"刷新绑定成功"}   
 
 # def printtime(name:str):
 #     print("lalala")

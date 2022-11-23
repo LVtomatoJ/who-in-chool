@@ -76,7 +76,7 @@ const onSubmit = () => {
     } else {
         axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
         axios({
-            method: 'post', url: '/token',
+            method: 'post', url: '/v2/token',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             data: {
                 grant_type: "",
@@ -89,14 +89,21 @@ const onSubmit = () => {
         }).then(function (response) {
             // console.log("test on")
             // console.log(response.data.access_token);
-            store.setAuthorization(response.data.access_token)
-            router.push('/index/index')
+            if (response.data.access_token=="") {
+                ElMessage({
+                message: '登录失败，请检查用户名和密码后重试.',
+                grouping: true,
+                type: 'warning',
+            })
+            }else{
+                store.setAuthorization(response.data.access_token)
+                router.push('/index/index')
+            }
             // console.log(response.status);
             // console.log(response.statusText);
             // console.log(response.headers);
             // console.log(response.config);
         }).catch(function (reason) {
-            console.log(reason)
             ElMessage({
                 message: '登录失败，请检查用户名和密码后重试.',
                 grouping: true,
