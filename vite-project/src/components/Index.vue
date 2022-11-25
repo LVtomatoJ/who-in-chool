@@ -4,16 +4,20 @@
         <el-container>
             <el-header style="height:120px;background-color:white;padding-top: 0px;">
                 <el-divider />
-                <el-row align="middle">
-                    <div class="flex-grow" />
-                    <el-col :span="5">
-                        谁在校园
-                    </el-col>
-                    <div class="flex-grow" />
+                <!-- <el-row align="middle"> -->
+                    <!-- <div class="flex-grow" /> -->
+                    <!-- <el-col :span="3"> -->
+                        <el-button
+      type="primary"
+      text
+      >谁在校园</el-button
+    >
+                    <!-- </el-col> -->
+                    <!-- <div class="flex-grow" /> -->
                     <!-- <el-col :span="3">
                         <el-button  type="primary" @click="toLoginOut">退出</el-button>
                     </el-col> -->
-                </el-row>
+                <!-- </el-row> -->
                 <el-divider />
             </el-header>
             <el-container>
