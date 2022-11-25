@@ -6,9 +6,8 @@ import tinydbtools as dbtools
 import nettolls
 from apscheduler.schedulers.background import BackgroundScheduler
 import mail
-from main import ACCESS_TOKEN_EXPIRE_MINUTES
+from default import ACCESS_TOKEN_EXPIRE_MINUTES,create_access_token
 from datetime import datetime, timedelta
-from main import create_access_token
 async def check_user_exist_by_email(email:str)->bool:
     """检查是否存在email对应用户
 
