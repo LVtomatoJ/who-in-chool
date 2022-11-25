@@ -91,6 +91,8 @@ class Templates(BaseModel):
 
 origins = ["http://127.0.0.1:5173/",
     "http://127.0.0.1:5173",
+    "http://localhost:5173/",
+    "http://localhost:5173",
     "tauri://localhost"]
 
 app.add_middleware(
@@ -319,14 +321,20 @@ async def rebind(bindid:str,auth = Depends(get_current_user_by_email)):
 
 
 @app.get("/v2/admin/getusers")
-async def getusers(bindid:str,auth = Depends(get_current_user_by_email)):
+async def getallusers(auth = Depends(get_current_user_by_email)):
     email = auth['email']
-    res = await tools.rebind(email=email,bindid=bindid)
+    res = await tools.get_all_users(email=email)
     if res['code']!=0:
         return {'code':res['code'],'msg':res['msg']}
-    return {'code':0,'msg':"刷新绑定成功"}   
+    return {'code':0,'msg':"获取所有用户成功",'data':{'users':res['data']['users']}}   
 
-
+@app.get('/v2/admin/changeuser')
+async def adminchangeuser(email:str,password:str,openid:str,level:int,maxbindnum:int,maxworknum:int,auth = Depends(get_current_user_by_email)):
+    myemail = auth['email']
+    res = await tools.admin_change_user(myemail=myemail,email=email,password=password,openid=openid,level=level,maxbindnum=maxbindnum,maxworknum=maxworknum)
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    return {'code':0,'msg':"修改成功",} 
 @app.get("/v2/minilogin")
 async def minilogin(code:str):
     res = await tools.minilogin(code=code)
@@ -351,8 +359,6 @@ async def getworks():
     if res['code']!=0:
         return {'code':res['code'],'msg':res['msg']}
     return {'code':0,'msg':"公告获取成功",'data':{'notics':res['data']['notics']}}   
-
-
 
 
 # def printtime(name:str):

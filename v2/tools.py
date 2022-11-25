@@ -166,9 +166,33 @@ async def get_works(email:str):
     works = dbtools.get_works(email=email)
     return {'code':0,'data':{'works':works}}
 
+async def get_all_users(email:str):
+    user = dbtools.get_user_by_email(email=email)
+    if user==None:
+        return {'code':502,'msg':'用户不存在'}
+    level = user['level']
+    if level!=999:
+        return {'code':409,'msg':"权限不足"}
+    users = dbtools.get_all_users()
+    return {'code':0,'msg':"查询所有用户成功",'data':{'users':users}}
+
 async def get_notics():
     notics = dbtools.get_all_notics()
     return {'code':0,'data':{'notics':notics}}
+
+async def admin_change_user(myemail:str,email:str,password:str,openid:str,level:int,maxbindnum:int,maxworknum:int):
+    user = dbtools.get_user_by_email(email=myemail)
+    if user==None:
+        return {'code':502,'msg':'用户不存在'}
+    level = user['level']
+    if level!=999:
+        return {'code':409,'msg':"权限不足"}
+    users:list = dbtools.change_user(email=email,password=password,openid=openid,level=level,maxbindnum=maxbindnum,maxworknum=maxworknum)
+    if len(user)>0:
+        return {'code':0,'msg':"更新成功"}
+    else:
+        return {'code':507,'msg':"更新结果为空"}
+
 
 async def del_bind(email:str,bindid:str):
     user = dbtools.get_user_by_email(email=email)
