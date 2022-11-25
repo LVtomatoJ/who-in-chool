@@ -8,6 +8,7 @@ template_db = TinyDB("main.db").table('templates')
 work_db = TinyDB("main.db").table('works')
 bindlog_db = TinyDB("log.db").table('bindlogs')
 worklog_db = TinyDB('log.db').table('worklogs')
+notic_db = TinyDB("main.db").table('notics')
 
 Querydb = Query()
 
@@ -116,6 +117,10 @@ def get_binds(email:str):
 def get_works(email:str):
     works = work_db.search(Querydb.email == email)
     return works
+
+def get_notics():
+    notics = notic_db.search()
+    return notics
 
 def del_bind(bindid:str):
     delbinds = bind_db.remove(Querydb.bindid == bindid)

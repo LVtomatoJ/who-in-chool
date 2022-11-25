@@ -284,12 +284,13 @@ async def addwork(bindid:str,templateid:str,starttime:str,endtime:str,auth = Dep
     return {'code':0,'msg':"任务添加成功"}  
 
 @app.get('/v2/getworks')
-async def getworkd(auth = Depends(get_current_user_by_email)):
+async def getworks(auth = Depends(get_current_user_by_email)):
     email = auth['email']
     res = await tools.get_works(email=email)
     if res['code']!=0:
         return {'code':res['code'],'msg':res['msg']}
     return {'code':0,'msg':"任务获取成功",'data':{'works':res['data']['works']}}   
+
 
 
 @app.get('/v2/getallworks')
@@ -300,7 +301,7 @@ async def printallworks():
 
 
 @app.get('/v2/getworklogs')
-async def getworks(auth = Depends(get_current_user_by_email)):
+async def getworklogs(auth = Depends(get_current_user_by_email)):
     email = auth['email']
     res = await tools.get_worklogs(email=email)
     if res['code']!=0:
@@ -335,14 +336,22 @@ async def minilogin(code:str):
 
 @app.get('/v2/minireg')
 async def minireg(code:str,email:str,password:str):
-    res = await tools.minireg(code=code)
+    res = await tools.minireg(code=code,email=email,password=password)
     if res['code']!=0:
         return {'code':res['code'],'msg':res['msg']}
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": email}, expires_delta=access_token_expires
     )
-    return {'code':0,'msg':"注册成功",'data':{"access_token": res['data']['access_token'], "token_type": "bearer"}}     
+    return {'code':0,'msg':"注册成功",'data':{"access_token": access_token, "token_type": "bearer"}}     
+
+@app.get('/v2/getnotic')
+async def getworks():
+    res = await tools.get_notics()
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    return {'code':0,'msg':"公告获取成功",'data':{'notics':res['data']['notics']}}   
+
 
 
 

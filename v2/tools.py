@@ -166,6 +166,10 @@ async def get_works(email:str):
     works = dbtools.get_works(email=email)
     return {'code':0,'data':{'works':works}}
 
+async def get_notics():
+    notics = dbtools.get_notics()
+    return {'code':0,'data':{'notics':notics}}
+
 async def del_bind(email:str,bindid:str):
     user = dbtools.get_user_by_email(email=email)
     if user==None:
