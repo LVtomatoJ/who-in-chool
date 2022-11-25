@@ -359,3 +359,10 @@ async def do_latest_sign(email:str,bindid:str,templateid:str):
     if r['code']!=0:
         return {'code':r['code'],'msg':r['msg']}
     return {'code':0,'msg':"签到成功"}
+
+async def get_openid(code:str):
+    r = nettolls.getOpenid(code=code)
+    if r['code']!=0:
+        return {'code':r['code'],'msg':r['msg']}
+    openid = r['data']['openid']
+    return {'code':0,'msg':"openid获取成功",'data':{'openid':openid}}
