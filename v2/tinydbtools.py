@@ -67,6 +67,16 @@ def get_user_by_email(email:str):
     user = user_db.get(Querydb.email==email)
     return user
 
+def get_user_by_openid(openid:str):
+    """通过openid获取user
+    Args:
+        openid (str): openid
+
+    Returns:
+        user
+    """
+    user = user_db.get(Querydb.openid==openid)
+    return user
 
 def add_user(email:str,password:str,openid:str,level:int,maxbindnum:int,maxworknum:int)->int:
     """添加用户

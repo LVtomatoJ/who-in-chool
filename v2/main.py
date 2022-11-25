@@ -176,7 +176,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     # print("11111")
     # print('username:'+form_data.username)
     # print("password:"+form_data.password)
-    print(Origin)
+    # print(Origin)
     r = await tools.check_user_email_password(email=form_data.username,password=form_data.password)
     if r['code']!=0:
         return {'code':r['code'],"access_token":"","token_type":""}
@@ -186,6 +186,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         data={"sub": form_data.username}, expires_delta=access_token_expires
     )
     return {'code':0,"access_token": access_token, "token_type": "bearer"}
+
 
 
 @app.get("/v2/")
@@ -326,12 +327,17 @@ async def getusers(bindid:str,auth = Depends(get_current_user_by_email)):
     return {'code':0,'msg':"刷新绑定成功"}   
 
 
-@app.get("/v2/getopenid")
-async def getopenid(code:str):
-    res = await tools.get_openid(code=code)
+@app.get("/v2/minilogin")
+async def minilogin(code:str):
+    res = await tools.minilogin(code=code)
     if res['code']!=0:
         return {'code':res['code'],'msg':res['msg']}
-    return {'code':0,'msg':"获取openid成功",'data':{'openid':res['data']['openid']}}   
+    return {'code':0,'msg':"登录成功",'data':{"access_token": res['data']['access_token'], "token_type": "bearer"}}   
+
+@app.get('/v2/minireg')
+async def minicheckreg(openid:str):
+    pass
+
 
 
 # def printtime(name:str):

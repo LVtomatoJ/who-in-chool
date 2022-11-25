@@ -6,6 +6,9 @@ import tinydbtools as dbtools
 import nettolls
 from apscheduler.schedulers.background import BackgroundScheduler
 import mail
+from main import ACCESS_TOKEN_EXPIRE_MINUTES
+from datetime import datetime, timedelta
+from main import create_access_token
 async def check_user_exist_by_email(email:str)->bool:
     """检查是否存在email对应用户
 
@@ -36,7 +39,7 @@ async def check_user_exist_by_openid(openid:str)->bool:
     """
     if dbtools.check_user_exist_by_openid(openid=openid):
         return {'code':0}
-    return {'code':502}
+    return {'code':502,'msg':"不存在用户"}
     
 
 
@@ -360,9 +363,34 @@ async def do_latest_sign(email:str,bindid:str,templateid:str):
         return {'code':r['code'],'msg':r['msg']}
     return {'code':0,'msg':"签到成功"}
 
-async def get_openid(code:str):
+async def minilogin(code:str):
     r = nettolls.getOpenid(code=code)
     if r['code']!=0:
         return {'code':r['code'],'msg':r['msg']}
     openid = r['data']['openid']
-    return {'code':0,'msg':"openid获取成功",'data':{'openid':openid}}
+    if not dbtools.check_user_exist_by_openid(openid=openid):
+        return {'code':502,'msg':"不存在用户"}
+    user = dbtools.get_user_by_openid(openid=openid)
+    email = user['email']
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": email}, expires_delta=access_token_expires
+    )
+    # if not dbtools.check_user_exist_by_openid(openid=openid):
+    #     return {'code':0}
+    # return {'code':502,'msg':"不存在用户"}
+    return {'code':0,'msg':"登录成功",'data':{"access_token": access_token, "token_type": "bearer"}}
+
+#不安全
+async def check_reg(openid:str):
+    if not dbtools.check_user_exist_by_openid(openid=openid):
+        return {'code':502,'msg':"不存在用户"}
+    user = dbtools.get_user_by_openid(openid=openid)
+    email = user['email']
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": email}, expires_delta=access_token_expires
+    )
+    return {'code':0,'msg':'用户已注册','data':{"access_token": access_token, "token_type": "bearer"}}
