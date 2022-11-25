@@ -118,8 +118,8 @@ def get_works(email:str):
     works = work_db.search(Querydb.email == email)
     return works
 
-def get_notics():
-    notics = notic_db.search()
+def get_all_notics():
+    notics = notic_db.all()
     return notics
 
 def del_bind(bindid:str):
@@ -169,4 +169,3 @@ def add_work_log(email:str,bindid:str,workid:str,templateid:str,time:str,code:in
 def get_work_log(email:str):
     worklogs = worklog_db.search(Querydb.email==email)
     return worklogs
-

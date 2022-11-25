@@ -167,7 +167,7 @@ async def get_works(email:str):
     return {'code':0,'data':{'works':works}}
 
 async def get_notics():
-    notics = dbtools.get_notics()
+    notics = dbtools.get_all_notics()
     return {'code':0,'data':{'notics':notics}}
 
 async def del_bind(email:str,bindid:str):
