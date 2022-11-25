@@ -27,7 +27,7 @@
     </el-tab-pane>
     </el-tabs>
 
-    <el-drawer v-model="userdrawer"
+    <el-drawer v-model="userdrawer " size="70%"
     title="编辑">
     <el-form>
         <el-form-item label="email">
