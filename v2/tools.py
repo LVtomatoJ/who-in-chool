@@ -380,6 +380,17 @@ async def minilogin(code:str):
     #     return {'code':0}
     # return {'code':502,'msg':"不存在用户"}
     return {'code':0,'msg':"登录成功",'data':{"access_token": access_token, "token_type": "bearer"}}
+async def minireg(code:str,email:str,password:str):
+    r = nettolls.getOpenid(code=code)
+    if r['code']!=0:
+        return {'code':r['code'],'msg':r['msg']}
+    openid = r['data']['openid']
+    if dbtools.check_user_exist_by_openid(openid=openid):
+        return {'code':403,'msg':"已存在用户"}
+    if dbtools.check_user_exist_by_email(email=email):
+        return {'code':403,'msg':"已存在用户"}
+    doc_id = dbtools.add_user(email=email,password=password,openid=openid,level=1,maxbindnum=1,maxworknum=1)
+    return {'code':0,'msg':"用户注册成功"}
 
 #不安全
 async def check_reg(openid:str):

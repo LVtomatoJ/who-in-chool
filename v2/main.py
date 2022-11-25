@@ -180,7 +180,6 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     r = await tools.check_user_email_password(email=form_data.username,password=form_data.password)
     if r['code']!=0:
         return {'code':r['code'],"access_token":"","token_type":""}
-    print(r)
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": form_data.username}, expires_delta=access_token_expires
@@ -334,9 +333,16 @@ async def minilogin(code:str):
         return {'code':res['code'],'msg':res['msg']}
     return {'code':0,'msg':"登录成功",'data':{"access_token": res['data']['access_token'], "token_type": "bearer"}}   
 
-# @app.get('/v2/minireg')
-# async def minicheckreg(openid:str):
-#     pass
+@app.get('/v2/minireg')
+async def minireg(code:str,email:str,password:str):
+    res = await tools.minireg(code=code)
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": email}, expires_delta=access_token_expires
+    )
+    return {'code':0,'msg':"注册成功",'data':{"access_token": res['data']['access_token'], "token_type": "bearer"}}     
 
 
 
