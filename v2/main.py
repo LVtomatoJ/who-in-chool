@@ -169,7 +169,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content=jsonable_encoder({"code": 1, "message": "提交参数错误"})
+        content=jsonable_encoder({"code": 1, "msg": "提交参数错误"})
     )
 
 @app.post("/v2/token", response_model=Token)
