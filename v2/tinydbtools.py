@@ -166,6 +166,10 @@ def change_user(email:str,password:str,openid:str,level:int,maxbindnum:int,maxwo
     users = user_db.update({'password':password,'openid':openid,'level':level,'maxbindnum':maxbindnum,'maxworknum':maxworknum},Querydb.email==email)
     return users
 
+def change_work(email:str,workid:str,templateid:str,bindid:str,status:int,starttime:str,endtime:str):
+    works = work_db.update({'email':email,'templateid':templateid,'bindid':bindid,'status':status,'starttime':starttime,'endtime':endtime},Querydb.workid==workid)
+    return works
+
 
 def change_bind(email:str,password:str,jwsession:str,notes:str,school:str,status:int,bindid:str,):
     binds = bind_db.update({'email':email,'password':password,'jwsession':jwsession,'notes':notes,'school':school,"status":status},Querydb.bindid==bindid)

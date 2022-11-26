@@ -344,10 +344,26 @@ async def getallbinds(auth = Depends(get_current_user_by_email)):
         return {'code':res['code'],'msg':res['msg']}
     return {'code':0,'msg':"获取所有绑定成功",'data':{'binds':res['data']['binds']}} 
 
+@app.get("/v2/admin/getworks")
+async def getallbinds(auth = Depends(get_current_user_by_email)):
+    email = auth['email']
+    res = await tools.get_all_works(email=email)
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    return {'code':0,'msg':"获取所有绑定成功",'data':{'works':res['data']['works']}} 
+
 @app.get('/v2/admin/changeuser')
 async def adminchangeuser(email:str,password:str,openid:str,level:int,maxbindnum:int,maxworknum:int,auth = Depends(get_current_user_by_email)):
     myemail = auth['email']
     res = await tools.admin_change_user(myemail=myemail,email=email,password=password,openid=openid,level=level,maxbindnum=maxbindnum,maxworknum=maxworknum)
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    return {'code':0,'msg':"修改成功",} 
+
+@app.get('/v2/admin/changework')
+async def adminchangework(email:str,workid:str,templateid:str,bindid:str,status:int,starttime:str,endtime:str,auth = Depends(get_current_user_by_email)):
+    myemail = auth['email']
+    res = await tools.admin_change_work(myemail=myemail,email=email,workid=workid,templateid=templateid,bindid=bindid,status=status,starttime=starttime,endtime=endtime)
     if res['code']!=0:
         return {'code':res['code'],'msg':res['msg']}
     return {'code':0,'msg':"修改成功",} 

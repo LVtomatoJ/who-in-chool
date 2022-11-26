@@ -70,6 +70,29 @@
   </el-table>
     </el-tab-pane>
 
+    <el-tab-pane label="任务列表" name="worklist">
+        <el-table :data="works" style="width: 100%">
+            <el-table-column type="index"></el-table-column>
+    <el-table-column prop="workid" label="workid" />
+    <el-table-column prop="status" label="status"/>
+    <el-table-column prop="bindid" label="bindid" />
+    <el-table-column prop="starttime" label="starttime" />
+    <el-table-column prop="endtime" label="endtime" />
+    <el-table-column prop="email" label="email" />
+    <el-table-column prop="templateid" label="templateid" />
+        <el-table-column>
+          <template #default="scope">
+            <!-- <el-button link type="danger" size="small" @click="deleteUser(scope.$index)">
+              删除
+            </el-button> -->
+            <el-button link type="success" size="small" @click="editWork(scope.$index)">
+              编辑
+            </el-button>
+          </template>
+        </el-table-column>
+  </el-table>
+    </el-tab-pane>
+
     
     </el-tabs>
 
@@ -157,7 +180,36 @@
             <el-button type="primary" @click="onBindChange">修改</el-button>
         </el-form-item>
     </el-form>
+    </el-drawer>
 
+    <el-drawer v-model="workdrawer " size="70%"
+    title="编辑任务">
+    <el-form>
+        <el-form-item label="workid">
+            <el-input disabled v-model="workform.workid" />
+        </el-form-item>
+        <el-form-item label="password">
+            <el-input v-model="workform.templateid" />
+        </el-form-item>
+        <el-form-item label="jwsession">
+            <el-input v-model="workform.bindid" />
+        </el-form-item>
+        <el-form-item label="status">
+            <el-input v-model="workform.status" />
+        </el-form-item>
+        <el-form-item label="email">
+            <el-input v-model="workform.starttime" />
+        </el-form-item>
+        <el-form-item label="notes">
+            <el-input v-model="workform.endtime" />
+        </el-form-item>
+        <el-form-item label="school">
+            <el-input v-model="workform.email" />
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="onWorkChange">修改</el-button>
+        </el-form-item>
+    </el-form>
     </el-drawer>
 </template>
 
@@ -172,10 +224,12 @@ import { stubFalse } from 'lodash';
 const userdrawer = ref(false)
 const noticdrawer = ref(false)
 const binddrawer = ref(false)
+const workdrawer = ref(false)
 const activeName = ref('all')
 var users = reactive<any[]>([])
 var notics = reactive<any[]>([])
 var binds = reactive<any[]>([])
+var works = reactive<any[]>([])
 const userform = reactive({
     email: '',
     password: '',
@@ -200,6 +254,15 @@ const bindform = reactive({
     notes:'',
     jwsession:''
 })
+const workform = reactive({
+    bindid: '',
+    workid: '',
+    templateid: '',
+    status: 0,
+    starttime: '',
+    endtime:'',
+    email:''
+})
 
 const tanChange = (tabname: any) => {
     if (tabname=='userlist') {
@@ -208,6 +271,8 @@ const tanChange = (tabname: any) => {
         getNotics()
     } else if (tabname=='bindlist'){
         getBinds()
+    } else if(tabname=='worklist'){
+        getWorks()
     }
 //   console.log(tabname)
 }
@@ -273,6 +338,25 @@ const getBinds = () => {
   })
 }
 
+const getWorks = () => {
+  axios({
+    method: 'get',
+    url: '/v2/admin/getworks',
+    headers: { Authorization: 'Bearer ' + store.Authorization }
+  }).then(function (response) {
+    if (response) {
+      let r_works: any[] = response.data['data']['works']
+      works.splice(0,works.length)
+      r_works.forEach(e => {
+        works.push(e);
+     });
+    } else {
+      
+    }
+
+  })
+}
+
 const editUser = (index: number)=>{
     userform.email=users[index].email
     userform.password=users[index].password
@@ -302,6 +386,19 @@ const editBind = (index: number)=>{
     bindform.school=binds[index].school
     binddrawer.value = true
 }
+
+const editWork = (index: number)=>{
+    workform.workid=works[index].workid
+    workform.templateid=works[index].templateid
+    workform.bindid=works[index].bindid
+    workform.status=works[index].status
+    workform.email=works[index].email
+    workform.starttime=works[index].starttime
+    workform.endtime=works[index].endtime
+
+    workdrawer.value = true
+}
+
 
 const onUserChange=()=>{
     const email = userform.email
@@ -386,6 +483,41 @@ const onBindChange=()=>{
     headers: { Authorization: 'Bearer ' + store.Authorization},
     params: {
       bindid:bindid,password:password,email:email,jwsession:jwsession,status:status,notes:notes,school:school
+    },
+  }).then(function (response){
+    if(response.data['code']==0){
+      ElMessage({
+        message: "修改成功",
+        grouping: true,
+        type: 'success',
+      })
+      getUsers()
+      userdrawer.value = false
+
+    }else{
+      ElMessage({
+        message: "修改失败：,"+response.data['msg'],
+        grouping: true,
+        type: 'error',
+      })
+    }
+  })
+}
+
+const onWorkChange=()=>{
+    const workid = workform.workid
+    const templateid = workform.templateid
+    const bindid = workform.bindid
+    const starttime = workform.starttime
+    const endtime = workform.endtime
+    const status = workform.status
+    const email = workform.email
+    axios({
+    method: 'get',
+    url:'/v2/admin/changework',
+    headers: { Authorization: 'Bearer ' + store.Authorization},
+    params: {
+      bindid:bindid,workid:workid,templateid:templateid,starttime:starttime,status:status,endtime:endtime,email:email
     },
   }).then(function (response){
     if(response.data['code']==0){

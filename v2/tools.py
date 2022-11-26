@@ -196,6 +196,17 @@ async def get_all_binds(email:str):
     binds = dbtools.get_all_binds()
     return {'code':0,'msg':"查询所有用户成功",'data':{'binds':binds}}
 
+async def get_all_works(email:str):
+    user = dbtools.get_user_by_email(email=email)
+    if user==None:
+        return {'code':502,'msg':'用户不存在'}
+    level = user['level']
+    if level!=999:
+        return {'code':409,'msg':"权限不足"}
+    works = dbtools.get_all_works()
+    return {'code':0,'msg':"查询所有任务成功",'data':{'works':works}}
+
+
 
 async def get_notics():
     notics = dbtools.get_notics()
@@ -210,6 +221,19 @@ async def admin_change_user(myemail:str,email:str,password:str,openid:str,level:
         return {'code':409,'msg':"权限不足"}
     users:list = dbtools.change_user(email=email,password=password,openid=openid,level=level,maxbindnum=maxbindnum,maxworknum=maxworknum)
     if len(user)>0:
+        return {'code':0,'msg':"更新成功"}
+    else:
+        return {'code':507,'msg':"更新结果为空"}
+
+async def admin_change_work(myemail:str,email:str,workid:str,templateid:str,bindid:str,status:int,starttime:str,endtime:str):
+    user = dbtools.get_user_by_email(email=myemail)
+    if user==None:
+        return {'code':502,'msg':'用户不存在'}
+    level = user['level']
+    if level!=999:
+        return {'code':409,'msg':"权限不足"}
+    works:list = dbtools.change_work(email=email,workid=workid,templateid=templateid,bindid=bindid,status=status,starttime=starttime,endtime=endtime)
+    if len(works)>0:
         return {'code':0,'msg':"更新成功"}
     else:
         return {'code':507,'msg':"更新结果为空"}
