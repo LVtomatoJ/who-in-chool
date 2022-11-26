@@ -176,8 +176,18 @@ async def get_all_users(email:str):
     users = dbtools.get_all_users()
     return {'code':0,'msg':"查询所有用户成功",'data':{'users':users}}
 
-async def get_notics():
+async def get_all_notics(email:str):
+    user = dbtools.get_user_by_email(email=email)
+    if user==None:
+        return {'code':502,'msg':'用户不存在'}
+    level = user['level']
+    if level!=999:
+        return {'code':409,'msg':"权限不足"}
     notics = dbtools.get_all_notics()
+    return {'code':0,'msg':"查询所有用户成功",'data':{'notics':notics}}
+
+async def get_notics():
+    notics = dbtools.get_notics()
     return {'code':0,'data':{'notics':notics}}
 
 async def admin_change_user(myemail:str,email:str,password:str,openid:str,level:int,maxbindnum:int,maxworknum:int):
@@ -192,6 +202,22 @@ async def admin_change_user(myemail:str,email:str,password:str,openid:str,level:
         return {'code':0,'msg':"更新成功"}
     else:
         return {'code':507,'msg':"更新结果为空"}
+
+
+
+async def admin_change_notic(email:str,title:str,content:str,time:str,show:int,noticid:str):
+    user = dbtools.get_user_by_email(email=email)
+    if user==None:
+        return {'code':502,'msg':'用户不存在'}
+    level = user['level']
+    if level!=999:
+        return {'code':409,'msg':"权限不足"}
+    notics:list = dbtools.change_notic(noticid=noticid,title=title,content=content,show=show,time=time)
+    if len(notics)>0:
+        return {'code':0,'msg':"更新成功"}
+    else:
+        return {'code':507,'msg':"更新结果为空"}
+
 
 
 async def del_bind(email:str,bindid:str):

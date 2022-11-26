@@ -326,7 +326,15 @@ async def getallusers(auth = Depends(get_current_user_by_email)):
     res = await tools.get_all_users(email=email)
     if res['code']!=0:
         return {'code':res['code'],'msg':res['msg']}
-    return {'code':0,'msg':"获取所有用户成功",'data':{'users':res['data']['users']}}   
+    return {'code':0,'msg':"获取所有用户成功",'data':{'users':res['data']['users']}} 
+
+@app.get("/v2/admin/getnotics")
+async def getallnotics(auth = Depends(get_current_user_by_email)):
+    email = auth['email']
+    res = await tools.get_all_notics(email=email)
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    return {'code':0,'msg':"获取所有公告成功",'data':{'notics':res['data']['notics']}} 
 
 @app.get('/v2/admin/changeuser')
 async def adminchangeuser(email:str,password:str,openid:str,level:int,maxbindnum:int,maxworknum:int,auth = Depends(get_current_user_by_email)):
@@ -335,6 +343,15 @@ async def adminchangeuser(email:str,password:str,openid:str,level:int,maxbindnum
     if res['code']!=0:
         return {'code':res['code'],'msg':res['msg']}
     return {'code':0,'msg':"修改成功",} 
+
+@app.get('/v2/admin/changenotic')
+async def adminchangenotic(title:str,content:str,noticid:str,time:str,show:int,auth = Depends(get_current_user_by_email)):
+    email = auth['email']
+    res = await tools.admin_change_notic(email=email,title=title,content=content,noticid=noticid,time=time,show=show)
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    return {'code':0,'msg':"修改成功"} 
+
 @app.get("/v2/minilogin")
 async def minilogin(code:str):
     res = await tools.minilogin(code=code)
@@ -354,7 +371,7 @@ async def minireg(code:str,email:str,password:str):
     return {'code':0,'msg':"注册成功",'data':{"access_token": access_token, "token_type": "bearer"}}     
 
 @app.get('/v2/getnotic')
-async def getworks():
+async def getnotics():
     res = await tools.get_notics()
     if res['code']!=0:
         return {'code':res['code'],'msg':res['msg']}

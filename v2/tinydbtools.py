@@ -118,6 +118,10 @@ def get_works(email:str):
     works = work_db.search(Querydb.email == email)
     return works
 
+def get_notics():
+    notics = notic_db.search(Querydb.show == 1)
+    return notics
+
 def get_all_notics():
     notics = notic_db.all()
     return notics
@@ -155,8 +159,12 @@ def update_work_status(workid:str,status:int):
     return works
 
 def change_user(email:str,password:str,openid:str,level:int,maxbindnum:int,maxworknum:int):
-    users = user_db.update({'email':email,'password':password,'openid':openid,'level':level,'maxbindnum':maxbindnum,'maxworknum':maxworknum},Querydb.email==email)
+    users = user_db.update({'password':password,'openid':openid,'level':level,'maxbindnum':maxbindnum,'maxworknum':maxworknum},Querydb.email==email)
     return users
+
+def change_notic(noticid:str,title:str,content:str,time:str,show:int):
+    notics = notic_db.update({'title':title,'content':content,'time':time,'show':show},Querydb.noticid==noticid)
+    return notics
 
 def update_bind_status(bindid:str,status:int):
     binds = bind_db.update({'status':status},Querydb.bindid==bindid)
