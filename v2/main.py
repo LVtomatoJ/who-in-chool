@@ -360,7 +360,7 @@ async def minilogin(code:str):
     return {'code':0,'msg':"登录成功",'data':{"access_token": res['data']['access_token'], "token_type": "bearer"}}   
 
 @app.get('/v2/minireg')
-async def minireg(code:str,email:str,password:str):
+async def minireg(code:str,email:EmailStr,password:str):
     res = await tools.minireg(code=code,email=email,password=password)
     if res['code']!=0:
         return {'code':res['code'],'msg':res['msg']}
