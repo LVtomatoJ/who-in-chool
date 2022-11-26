@@ -47,11 +47,34 @@
   </el-table>
     </el-tab-pane>
 
+    <el-tab-pane label="绑定列表" name="bindlist">
+        <el-table :data="binds" style="width: 100%">
+            <el-table-column type="index"></el-table-column>
+    <el-table-column prop="bindid" label="bindid" />
+    <el-table-column prop="password" label="password"/>
+    <el-table-column prop="jwsession" label="jwsession" />
+    <el-table-column prop="status" label="status" />
+    <el-table-column prop="email" label="email" />
+    <el-table-column prop="notes" label="notes" />
+    <el-table-column prop="school" label="school" />
+        <el-table-column>
+          <template #default="scope">
+            <!-- <el-button link type="danger" size="small" @click="deleteUser(scope.$index)">
+              删除
+            </el-button> -->
+            <el-button link type="success" size="small" @click="editBind(scope.$index)">
+              编辑
+            </el-button>
+          </template>
+        </el-table-column>
+  </el-table>
+    </el-tab-pane>
+
     
     </el-tabs>
 
     <el-drawer v-model="userdrawer " size="70%"
-    title="编辑">
+    title="编辑用户">
     <el-form>
         <el-form-item label="email">
             <el-input disabled v-model="userform.email" />
@@ -76,10 +99,12 @@
         </el-form-item>
     </el-form>
 
+
+
     </el-drawer>
 
     <el-drawer v-model="noticdrawer " size="70%"
-    title="编辑">
+    title="编辑公告">
     <el-form>
         <el-form-item label="noticid">
             <el-input disabled v-model="noticform.noticid" />
@@ -103,6 +128,37 @@
 
     </el-drawer>
 
+
+    <el-drawer v-model="binddrawer " size="70%"
+    title="编辑绑定">
+    <el-form>
+        <el-form-item label="bindid">
+            <el-input disabled v-model="bindform.bindid" />
+        </el-form-item>
+        <el-form-item label="password">
+            <el-input v-model="bindform.password" />
+        </el-form-item>
+        <el-form-item label="jwsession">
+            <el-input v-model="bindform.jwsession" />
+        </el-form-item>
+        <el-form-item label="status">
+            <el-input v-model="bindform.status" />
+        </el-form-item>
+        <el-form-item label="email">
+            <el-input v-model="bindform.email" />
+        </el-form-item>
+        <el-form-item label="notes">
+            <el-input v-model="bindform.notes" />
+        </el-form-item>
+        <el-form-item label="school">
+            <el-input v-model="bindform.school" />
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="onBindChange">修改</el-button>
+        </el-form-item>
+    </el-form>
+
+    </el-drawer>
 </template>
 
 <script lang="ts" setup>
@@ -115,9 +171,11 @@ import { store } from '../store'
 import { stubFalse } from 'lodash';
 const userdrawer = ref(false)
 const noticdrawer = ref(false)
+const binddrawer = ref(false)
 const activeName = ref('all')
 var users = reactive<any[]>([])
 var notics = reactive<any[]>([])
+var binds = reactive<any[]>([])
 const userform = reactive({
     email: '',
     password: '',
@@ -133,13 +191,23 @@ const noticform = reactive({
     show: 0,
     noticid: '',
 })
+const bindform = reactive({
+    bindid: '',
+    password: '',
+    email: '',
+    status: 0,
+    school: '',
+    notes:'',
+    jwsession:''
+})
+
 const tanChange = (tabname: any) => {
     if (tabname=='userlist') {
         getUsers()
     } else if (tabname=='noticlist') {
         getNotics()
-    }{
-        
+    } else if (tabname=='bindlist'){
+        getBinds()
     }
 //   console.log(tabname)
 }
@@ -180,11 +248,28 @@ const getNotics = () => {
         notics.push(e);
      });
     } else {
-      // router.replace('/login')
+      
     }
 
-    // UserInfo.email="123"
-    // console.log(UserInfo)
+  })
+}
+
+const getBinds = () => {
+  axios({
+    method: 'get',
+    url: '/v2/admin/getbinds',
+    headers: { Authorization: 'Bearer ' + store.Authorization }
+  }).then(function (response) {
+    if (response) {
+      let r_binds: any[] = response.data['data']['binds']
+      binds.splice(0,binds.length)
+      r_binds.forEach(e => {
+        binds.push(e);
+     });
+    } else {
+      
+    }
+
   })
 }
 
@@ -205,6 +290,17 @@ const editNotic = (index: number)=>{
     noticform.show=notics[index].show
     noticform.noticid=notics[index].noticid
     noticdrawer.value = true
+}
+
+const editBind = (index: number)=>{
+    bindform.bindid=binds[index].bindid
+    bindform.password=binds[index].password
+    bindform.email=binds[index].email
+    bindform.status=binds[index].status
+    bindform.jwsession=binds[index].jwsession
+    bindform.notes=binds[index].notes
+    bindform.school=binds[index].school
+    binddrawer.value = true
 }
 
 const onUserChange=()=>{
@@ -254,6 +350,42 @@ const onNoticChange=()=>{
     headers: { Authorization: 'Bearer ' + store.Authorization},
     params: {
       title:title,content:content,time:time,show:show,noticid:noticid
+    },
+  }).then(function (response){
+    if(response.data['code']==0){
+      ElMessage({
+        message: "修改成功",
+        grouping: true,
+        type: 'success',
+      })
+      getUsers()
+      userdrawer.value = false
+
+    }else{
+      ElMessage({
+        message: "修改失败：,"+response.data['msg'],
+        grouping: true,
+        type: 'error',
+      })
+    }
+  })
+}
+
+
+const onBindChange=()=>{
+    const bindid = bindform.bindid
+    const password = bindform.password
+    const email = bindform.email
+    const jwsession = bindform.jwsession
+    const status = bindform.status
+    const notes = bindform.notes
+    const school = bindform.school
+    axios({
+    method: 'get',
+    url:'/v2/admin/changebind',
+    headers: { Authorization: 'Bearer ' + store.Authorization},
+    params: {
+      bindid:bindid,password:password,email:email,jwsession:jwsession,status:status,notes:notes,school:school
     },
   }).then(function (response){
     if(response.data['code']==0){
