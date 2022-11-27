@@ -1,13 +1,13 @@
 <template >
     <div style="display: flex;justify-content:center;align-items: center;">
-        <el-card class="box-card" >
+        <el-card class="box-card">
             <template #header>
                 <div class="card-header">
                     <span>登录</span>
                 </div>
             </template>
             <div class="common-layout" style="width:auto ;">
-    
+
                 <el-form :model="form" label-width="70px" label-suffix=":">
                     <el-form-item label="用户名">
                         <el-input style="width:auto ;" v-model="form.username"></el-input>
@@ -27,7 +27,7 @@
             <el-row align="middle" justify="center">
                 <el-col :span="3"><p>密码:</p></el-col><el-col :span="6"><el-input  type="password" v-model="password" placeholder="Please input" show-password /></el-col>
             </el-row> -->
-    
+
                 <!-- <el-input v-model="password" type="password" placeholder="Please input password" show-password />
             <p>password is: {{ password }}</p> -->
             </div>
@@ -94,13 +94,13 @@ const onSubmit = () => {
         }).then(function (response) {
             // console.log("test on")
             // console.log(response.data.access_token);
-            if (response.data.access_token=="") {
+            if (response.data.access_token == "") {
                 ElMessage({
-                message: '登录失败，请检查用户名和密码后重试.',
-                grouping: true,
-                type: 'warning',
-            })
-            }else{
+                    message: '登录失败，请检查用户名和密码后重试.',
+                    grouping: true,
+                    type: 'warning',
+                })
+            } else {
                 store.setAuthorization(response.data.access_token)
                 router.push('/index/index')
             }

@@ -1,6 +1,6 @@
 <template>
 
-    <div  class="common-layout">
+    <div class="common-layout">
         <el-container>
             <el-header style="height:120px;background-color:white;padding-top: 0px;">
                 <el-divider />

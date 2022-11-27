@@ -116,7 +116,7 @@
         <el-table-column prop="bindid" label="绑定" />
         <el-table-column prop="msg" label="提示" />
         <el-table-column prop="workid" label="任务id" />
-        <el-table-column prop="code" label="返回码"  width="auto"/>
+        <el-table-column prop="code" label="返回码" width="auto" />
 
       </el-table>
     </el-tab-pane>
@@ -230,11 +230,11 @@ interface Work {
 }
 interface Log {
 
-time: string
-code: number
-workid: string
-msg: string
-bindid: string
+  time: string
+  code: number
+  workid: string
+  msg: string
+  bindid: string
 
 }
 

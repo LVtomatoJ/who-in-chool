@@ -4,6 +4,7 @@ from requests.cookies import RequestsCookieJar
 from tinydb.table import Document
 from default import Miniprogram
 
+
 def getJwsession(bindid: str, password: str):
     """获取session
 
@@ -115,17 +116,18 @@ def doSign(jwsession: str, data: dict):
         return {'code': 503, "msg": "网络请求异常"}
 
 
-def getOpenid(code:str):
+def getOpenid(code: str):
     try:
         url = 'https://api.weixin.qq.com/sns/jscode2session'
-        data = {'appid':Miniprogram.appid,'secret':Miniprogram.secret,'js_code':code,'grant_type':'authorization_code'}
+        data = {'appid': Miniprogram.appid, 'secret': Miniprogram.secret,
+                'js_code': code, 'grant_type': 'authorization_code'}
         r: requests.Response = requests.post(
-            url=url,data=data)
+            url=url, data=data)
         data = r.json()
         if data.get('errcode'):
-            return {'code':data['errcode'],'msg':data['errmsg']}
+            return {'code': data['errcode'], 'msg': data['errmsg']}
         else:
-            return {'code':0,'msg':"获取openid成功",'data':{'openid':data['openid']}}
+            return {'code': 0, 'msg': "获取openid成功", 'data': {'openid': data['openid']}}
     except Exception as e:
         print(e.args)
         return {'code': 503, "msg": "网络请求异常"}

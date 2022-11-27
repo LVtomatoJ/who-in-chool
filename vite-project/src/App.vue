@@ -16,9 +16,9 @@ import Login from './components/Login.vue'
     </a>
   </div>
   <HelloWorld msg="Vite + Vue" /> -->
-  <div >
-      
-      <RouterView />
+  <div>
+
+    <RouterView />
   </div>
 
 </template>
@@ -26,12 +26,14 @@ import Login from './components/Login.vue'
 <style scoped>
 .card-header {
   display: flex;
-  justify-content:center;
+  justify-content: center;
   align-items: center;
 }
+
 .box-card {
   width: 700px;
 }
+
 /* .logo {
   height: 6em;
   padding: 1.5em;

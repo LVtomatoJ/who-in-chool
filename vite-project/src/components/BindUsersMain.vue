@@ -2,19 +2,20 @@
   <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="列表" name="list">
       <el-button type="primary" @click="getBinds" style="justify-content:flex-end">刷新</el-button>
-      <el-table table-layout="auto" :data="store.Binds" border style="width: 100%;margin-top: 20px;" :row-class-name="tableRowClassName">
+      <el-table table-layout="auto" :data="store.Binds" border style="width: 100%;margin-top: 20px;"
+        :row-class-name="tableRowClassName">
         <el-table-column type="index"></el-table-column>
         <el-table-column prop="bindid" label="用户id" width="auto" />
-        <el-table-column prop="status" label="状态" width="auto" >
+        <el-table-column prop="status" label="状态" width="auto">
           <template #default="scope">
-          
-          <div v-if="scope.row.status===1">
-            正常
-          </div>
-          <div v-else>
-            失效
-          </div>
-    </template>
+
+            <div v-if="scope.row.status === 1">
+              正常
+            </div>
+            <div v-else>
+              失效
+            </div>
+          </template>
         </el-table-column>
         <el-table-column prop="school" label="学校" />
         <el-table-column prop="notes" label="备注" width="auto" />
@@ -47,7 +48,7 @@
           <el-button type="primary" style="width: 70%" @click="onAddBindUser">添加</el-button>
         </el-form-item>
       </el-form>
-      
+
     </el-tab-pane>
   </el-tabs>
 
@@ -70,10 +71,10 @@ const labelPosition = ref('left')
 
 interface Bind {
 
-status: number
-notes: string
-school: string
-bindid: string
+  status: number
+  notes: string
+  school: string
+  bindid: string
 
 }
 
@@ -86,7 +87,7 @@ const tableRowClassName = ({
 }) => {
   if (row.status === 2) {
     return 'warning-row'
-  } else if (row.status ===  1) {
+  } else if (row.status === 1) {
     return 'success-row'
   }
   return ''
@@ -108,22 +109,22 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
 const deleteBind = (index: number) => {
   axios({
     method: 'get',
-    url:'/v2/delbind',
-    headers: { Authorization: 'Bearer ' + store.Authorization},
+    url: '/v2/delbind',
+    headers: { Authorization: 'Bearer ' + store.Authorization },
     params: {
       bindid: store.Binds[index].bindid
     },
-  }).then(function (response){
-    if(response.data['code']==0){
+  }).then(function (response) {
+    if (response.data['code'] == 0) {
       ElMessage({
         message: "删除成功",
         grouping: true,
         type: 'success',
       })
       store.Binds.splice(index, 1)
-    }else{
+    } else {
       ElMessage({
-        message: "删除失败,"+response.data['msg'],
+        message: "删除失败," + response.data['msg'],
         grouping: true,
         type: 'error',
       })
@@ -135,22 +136,22 @@ const deleteBind = (index: number) => {
 const reBind = (index: number) => {
   axios({
     method: 'get',
-    url:'/v2/rebind',
-    headers: { Authorization: 'Bearer ' + store.Authorization},
+    url: '/v2/rebind',
+    headers: { Authorization: 'Bearer ' + store.Authorization },
     params: {
       bindid: store.Binds[index].bindid
     },
-  }).then(function (response){
-    if(response.data['code']==0){
+  }).then(function (response) {
+    if (response.data['code'] == 0) {
       ElMessage({
         message: "刷新绑定成功",
         grouping: true,
         type: 'success',
       })
       // store.Binds.splice(index, 1)
-    }else{
+    } else {
       ElMessage({
-        message: "刷新失败,"+response.data['msg'],
+        message: "刷新失败," + response.data['msg'],
         grouping: true,
         type: 'error',
       })
@@ -223,7 +224,7 @@ const getBinds = () => {
     // console.log(typeof(response))
     // console.log(response)
     if (response) {
-      store.Binds=response.data['data']['binds']
+      store.Binds = response.data['data']['binds']
     } else {
       // router.replace('/login')
     }
@@ -238,6 +239,7 @@ const getBinds = () => {
 .el-table .warning-row {
   --el-table-tr-bg-color: var(--el-color-error-light-9);
 }
+
 .el-table .success-row {
   --el-table-tr-bg-color: var(--el-color-success-light-9);
 }
