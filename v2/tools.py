@@ -501,7 +501,7 @@ async def do_latest_sign(email: str, bindid: str, templateid: str):
     data['signId'] = id
     data['id'] = logId
     res = nettolls.doSign(
-        jwsession='67da382ba8df4d7fb953c633d6d9ff12', data=data)
+        jwsession=jwsession, data=data)
     if r['code'] != 0:
         return {'code': r['code'], 'msg': r['msg']}
     return {'code': 0, 'msg': "签到成功"}
