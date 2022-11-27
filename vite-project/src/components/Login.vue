@@ -33,6 +33,11 @@
             </div>
         </el-card>
     </div>
+    <!-- <div style="font-size: 15px;position:absolute;bottom:10px;left: 45%;">
+                           <a href="https://beian.miit.gov.cn/">
+                            陕ICP备2022013710号-1     
+                           </a>            
+                        </div> -->
 </template>
 
 

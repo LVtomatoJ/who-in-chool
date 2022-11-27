@@ -265,6 +265,16 @@ async def admin_change_notic(email:str,title:str,content:str,time:str,show:int,n
     else:
         return {'code':507,'msg':"更新结果为空"}
 
+async def admin_add_notic(email:str,title:str,content:str,time:str,show:int,noticid:str):
+    user = dbtools.get_user_by_email(email=email)
+    if user==None:
+        return {'code':502,'msg':'用户不存在'}
+    level = user['level']
+    if level!=999:
+        return {'code':409,'msg':"权限不足"}
+    docid = dbtools.add_notic(noticid=noticid,title=title,content=content,show=show,time=time)
+    return {'code':0,'msg':"更新成功"}
+
 
 
 async def del_bind(email:str,bindid:str):

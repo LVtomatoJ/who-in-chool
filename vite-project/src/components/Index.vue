@@ -1,20 +1,16 @@
 <template>
 
-    <div class="common-layout">
+    <div  class="common-layout">
         <el-container>
             <el-header style="height:120px;background-color:white;padding-top: 0px;">
                 <el-divider />
                 <!-- <el-row align="middle"> -->
-                    <!-- <div class="flex-grow" /> -->
-                    <!-- <el-col :span="3"> -->
-                        <el-button
-      type="primary"
-      text
-      >谁在校园</el-button
-    >
-                    <!-- </el-col> -->
-                    <!-- <div class="flex-grow" /> -->
-                    <!-- <el-col :span="3">
+                <!-- <div class="flex-grow" /> -->
+                <!-- <el-col :span="3"> -->
+                <el-button type="primary" text>谁在校园</el-button>
+                <!-- </el-col> -->
+                <!-- <div class="flex-grow" /> -->
+                <!-- <el-col :span="3">
                         <el-button  type="primary" @click="toLoginOut">退出</el-button>
                     </el-col> -->
                 <!-- </el-row> -->
@@ -26,7 +22,8 @@
                         <el-radio-button size="small" :label="false">展开</el-radio-button>
                         <el-radio-button size="small" :label="true">缩小</el-radio-button>
                     </el-radio-group> -->
-                    <el-button  :icon="Expand"  style="margin-left: 10px;margin-bottom: 10px;" @click="isCollapse=!isCollapse"/>
+                    <el-button :icon="Expand" style="margin-left: 10px;margin-bottom: 10px;"
+                        @click="isCollapse = !isCollapse" />
                     <el-menu :collapse="isCollapse" router default-active="index">
                         <el-menu-item index="index">
                             <el-icon>
@@ -46,8 +43,8 @@
                             </el-icon>
                             <span>任务管理</span>
                         </el-menu-item>
-                        <template v-if="store.UserInfo.level==999">
-                        
+                        <template v-if="store.UserInfo.level == 999">
+
                             <el-menu-item index="admin">
                                 <el-icon>
                                     <setting />
@@ -58,11 +55,22 @@
                     </el-menu>
 
                 </el-aside>
-                <el-main style="background-color:white;">
-                    <router-view />
-                </el-main>
+                <el-container>
+                    <el-main style="background-color:white;">
+                        <router-view />
+                    </el-main>
+                    <el-footer>
+                        <!-- <div style="font-size: 15px;position:absolute;bottom:10px;left: 45%;">
+                           <a href="https://beian.miit.gov.cn/">
+                            陕ICP备2022013710号-1     
+                           </a>            
+                        </div> -->
+                    </el-footer>
+                </el-container>
             </el-container>
+
         </el-container>
+
     </div>
 
 
@@ -73,7 +81,7 @@
 
 <script lang="ts" setup>
 import {
-  Expand, Ticket
+    Expand, Ticket
 } from '@element-plus/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 import { store } from '../store'
@@ -115,7 +123,7 @@ const getBinds = () => {
     })
 }
 
-const getdUserInfo = ()=>{
+const getdUserInfo = () => {
     axios({
         method: 'get',
         url: '/v2/getuserinfo',
@@ -123,14 +131,14 @@ const getdUserInfo = ()=>{
     }).then(function (response) {
         // console.log(typeof(response))
         // console.log(response)
-        if (response){
+        if (response) {
 
-            store.UserInfo=response.data['data']['user']
-        }else{
+            store.UserInfo = response.data['data']['user']
+        } else {
             // router.replace('/login')
         }
-          
-            // UserInfo.email="123"
+
+        // UserInfo.email="123"
         // console.log(UserInfo)
     })
 }

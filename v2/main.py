@@ -385,6 +385,14 @@ async def adminchangebind(email:str,password:str,jwsession:str,notes:str,school:
         return {'code':res['code'],'msg':res['msg']}
     return {'code':0,'msg':"修改成功",} 
 
+@app.get('/v2/admin/addnotic')
+async def adminaddnotic(title:str,content:str,noticid:str,time:str,show:int,auth = Depends(get_current_user_by_email)):
+    email = auth['email']
+    res = await tools.admin_add_notic(email=email,title=title,content=content,noticid=noticid,time=time,show=show)
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    return {'code':0,'msg':"添加成功"} 
+
 @app.get("/v2/minilogin")
 async def minilogin(code:str):
     res = await tools.minilogin(code=code)

@@ -199,6 +199,6 @@ def get_work_log(email:str):
     worklogs = worklog_db.search(Querydb.email==email)
     return worklogs
 
-def add_notic(title:str,content:str,time:str):
-    notic = notic_db.insert({'title':title,'content':content,'time':time})
-    return notic
+def add_notic(title:str,content:str,time:str,noticid:str,show:int):
+    docid = notic_db.insert({'title':title,'content':content,'time':time,'noticid':noticid,'show':show})
+    return docid
