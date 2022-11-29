@@ -507,6 +507,39 @@ async def do_latest_sign(email: str, bindid: str, templateid: str):
     return {'code': 0, 'msg': "签到成功"}
 
 
+async def custom_sign(email: str, bindid:str,city:str,longitude:str,country:str,district:str,township:str,latitude:str,province:str):
+    user = dbtools.get_user_by_email(email=email)
+    if user == None:
+        return {'code': 502, 'msg': "用户不存在"}
+    bind = dbtools.get_bind(bindid=bindid)
+    if bind == None:
+        return {'code': 406, 'msg': '绑定用户不存在'}
+    if bind['email'] != email:
+        return {'code': 409, 'msg': "权限不足"}
+    jwsession = bind['jwsession']
+    r = nettolls.getSignList(jwsession=jwsession)
+    if r['code'] != 0:
+        return {'code': r['code'], 'msg': r['msg']}
+    latestsign = r['data']['signlist'][0]
+    id = latestsign['id']
+    logId = latestsign['logId']
+    data = {
+        "signId": id ,
+        "city": city,
+        "longitude":longitude,
+        "id": logId,
+        "country": country,
+        "district": district,
+        "township": township,
+        "latitude": latitude,
+        "province": province}
+    res = nettolls.doSign(
+        jwsession=jwsession, data=data)
+    if r['code'] != 0:
+        return {'code': r['code'], 'msg': r['msg']}
+    return {'code': 0, 'msg': "签到成功"}
+
+
 async def minilogin(code: str):
     r = nettolls.getOpenid(code=code)
     if r['code'] != 0:

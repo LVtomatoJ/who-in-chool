@@ -319,6 +319,14 @@ async def rebind(bindid:str,auth = Depends(get_current_user_by_email)):
         return {'code':res['code'],'msg':res['msg']}
     return {'code':0,'msg':"刷新绑定成功"}   
 
+@app.get('/v2/customsign')
+async def customsign(bindid:str,city:str,longitude:str,country:str,district:str,township:str,latitude:str,province:str,auth = Depends(get_current_user_by_email)):
+    email = auth['email']
+    res = await tools.custom_sign(email=email,bindid=bindid,city=city,longitude=longitude,country=country,district=district,township=township,latitude=latitude,province=province)
+    if res['code']!=0:
+        return {'code':res['code'],'msg':res['msg']}
+    return {'code':0,'msg':"自定义签到成功"}   
+
 
 @app.get("/v2/admin/getusers")
 async def getallusers(auth = Depends(get_current_user_by_email)):
@@ -417,6 +425,7 @@ async def getnotics():
     if res['code']!=0:
         return {'code':res['code'],'msg':res['msg']}
     return {'code':0,'msg':"公告获取成功",'data':{'notics':res['data']['notics']}}   
+
 
 
 # def printtime(name:str):
