@@ -464,8 +464,12 @@ async def add_work(email: str, bindid: str, templateid: str, scheduler: Backgrou
     workid = ''.join(random.sample(string.ascii_letters + string.digits, 10))
     docid = dbtools.add_work(email=email, bindid=bindid, templateid=templateid,
                              starttime=starttime, endtime=endtime, workid=workid)
-    job = scheduler.add_job(long_work, args=(email, bindid, templateid, workid,),
+    try:
+        job = scheduler.add_job(long_work, args=(email, bindid, templateid, workid,),
                             trigger='interval', hours=24, start_date=starttime, end_date=endtime, id=workid)
+    except Exception as e:
+        dbtools.del_work(workid=workid)
+        return {'code':412,'msg':"添加任务失败"}
     docid = dbtools.add_work_log(email=email, bindid=bindid, workid=workid, templateid=templateid, time=time.strftime(
         "%Y-%m-%d %H:%M:%S", time.localtime(time.time())), code=0, msg="添加任务成功")
     return {'code': 0}
