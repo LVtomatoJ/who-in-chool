@@ -16,6 +16,7 @@ from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from apscheduler.job import Job
 import tools
 import tinydbtools as dbtool
+from minisend import MiniSend
 app = FastAPI()
 
 
@@ -41,7 +42,10 @@ def init_jobs(jobs:List[Job]):
             continue
         
     
-
+def flushat():
+    # global minisend
+    # minisend.flush_access_token()
+    print("flushflush")
 
 @app.on_event('startup')
 def init_scheduler():
@@ -49,15 +53,18 @@ def init_scheduler():
         'default': SQLAlchemyJobStore(url='sqlite:///jobs.sqlite')
     }
     global scheduler
-    
+    global minisend
     scheduler = BackgroundScheduler()
     scheduler.configure(jobstores=jobstores)
+    
     scheduler.start()
     jobs = scheduler.get_jobs()
     init_jobs(jobs=jobs)
     scheduler.print_jobs()
-    
-
+    minisend = MiniSend(scheduler)
+    scheduler.print_jobs()
+def demogg():
+    print('123')
 class UserInfo(BaseModel):
     email:str
     openid:str
@@ -425,6 +432,18 @@ async def getnotics():
     if res['code']!=0:
         return {'code':res['code'],'msg':res['msg']}
     return {'code':0,'msg':"公告获取成功",'data':{'notics':res['data']['notics']}}   
+
+# @app.get('/v2/getas')
+# async def getas():
+#     global minisend
+#     return minisend.get_access_token()
+
+# @app.get('/v2/flush')
+# async def flush():
+#     global minisend
+#     minisend.flush_access_token()
+#     return 0
+
 
 
 
