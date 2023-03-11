@@ -53,6 +53,32 @@ def getSchool(jwsession: str):
         return {'code': 503, "msg": "网络请求异常"}
 
 
+# def doHeat(jwsession: str, data: Document):
+#     #          超时：1
+#     #          session过期：-10
+#     #          其他：101
+#     try:
+
+#         # print(type())
+#         # data = dict(data)
+#         # print(data)
+#         # print('====')
+#         # print(dataa)
+#         url = rf'https://student.wozaixiaoyuan.com/heat/save.json'
+#         #headers = {"content-type": "application/x-www-form-urlencoded"}
+#         r: requests.Response = requests.post(
+#             url=url, headers={'JWSESSION': jwsession}, data=data)
+#         data = r.json()
+#         code = data['code']
+#         if code != 0:
+#             if code == -10:
+#                 return {'code': '505', 'msg': "绑定过期，重新绑定后重试"}
+#             return {'code': '506', 'msg': "请求未知错误", 'data': {'code': code}}
+#         return {'code': 0, 'msg': "网络请求成功"}
+#     except Exception as e:
+#         print(e.args)
+#         return {'code': 503, "msg": "网络请求异常"}
+
 def doHeat(jwsession: str, data: Document):
     #          超时：1
     #          session过期：-10
@@ -64,7 +90,7 @@ def doHeat(jwsession: str, data: Document):
         # print(data)
         # print('====')
         # print(dataa)
-        url = rf'https://student.wozaixiaoyuan.com/heat/save.json'
+        url = rf'https://student.wozaixiaoyuan.com/heat/save?batch=400001'
         #headers = {"content-type": "application/x-www-form-urlencoded"}
         r: requests.Response = requests.post(
             url=url, headers={'JWSESSION': jwsession}, data=data)

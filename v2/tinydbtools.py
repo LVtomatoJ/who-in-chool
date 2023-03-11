@@ -215,14 +215,13 @@ def change_notic(noticid: str, title: str, content: str, time: str, show: int):
 
 
 def update_bind_status(bindid: str, status: int):
-    binds = bind_db.update({'status': status}, Querydb.bindid == bindid)
+    binds = bind_db.update({"status": status}, Querydb.bindid == bindid)
     return binds
 
 
 def update_bind_jwsession(bindid: str, jwsession):
-    binds = bind_db.update(
-        {'status': 1, "jwsession": jwsession}, Querydb.bindid == bindid)
-
+    binds = bind_db.update({'status': 1, "jwsession": jwsession}, Querydb.bindid == bindid)
+    return binds
 
 def get_all_works():
     works = work_db.all()
@@ -244,3 +243,24 @@ def add_notic(title: str, content: str, time: str, noticid: str, show: int):
     docid = notic_db.insert(
         {'title': title, 'content': content, 'time': time, 'noticid': noticid, 'show': show})
     return docid
+
+def add_template(type,templateid,data,name,status,school):
+    doc_id = template_db.insert({'type':type,'templateid':templateid,'data':data,'name':name,'status':status,'school':school})
+    return doc_id
+
+def update_template_status(templateid,status):
+    templates = template_db.update({'status': status}, Querydb.templateid == templateid)
+    return templates
+
+# add_template(1,'1aLiJ',{
+#   "t1" : "正常(37.3°C以下)",
+#   "location" : "中国/陕西省/咸阳市/渭城区/渭阳街道/学苑路/156/610404/156610400/610404004/34.36141954210069/108.72826633029514",
+#   "locationType" : 0,
+#   "type" : 0,
+#   "t2" : "正常",
+#   "locationMode" : 0
+# },"咸阳师范学院每日健康打卡【最新】",1,"咸阳师范学院")
+
+# print(get_templates())
+# update_template_status('1aLiX',2)
+# print(get_templates())

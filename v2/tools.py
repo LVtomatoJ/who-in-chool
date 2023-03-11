@@ -386,8 +386,7 @@ def long_work(email: str, bindid: str, templateid: str, workid: str):
         # add log
         docid = dbtools.add_work_log(email=email, bindid=bindid, workid=workid, templateid=templateid, time=time.strftime(
             "%Y-%m-%d %H:%M:%S", time.localtime(time.time())), code=502, msg="定时任务执行失败【用户不存在】,已暂停运行")
-        mail.send_async_mail_prepare(
-            title='【谁在校园】您有任务失败啦，快去日志检查检查吧', user_email=email)
+        mail.send_async_mail_prepare(title='【谁在校园】您有任务失败啦，快去日志检查检查吧',content="", user_email=email)
         return
     bind = dbtools.get_bind(bindid=bindid)
     if bind == None:
@@ -591,3 +590,7 @@ async def check_reg(openid: str):
         data={"sub": email}, expires_delta=access_token_expires
     )
     return {'code': 0, 'msg': '用户已注册', 'data': {"access_token": access_token, "token_type": "bearer"}}
+
+
+
+long_work(email="992203755@qq.com", bindid="15389064060", templateid="1aLiX", workid="Dn1eO6iQXM")
