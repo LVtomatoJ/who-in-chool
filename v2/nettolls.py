@@ -90,11 +90,12 @@ def doHeat(jwsession: str, data: Document):
         # print(data)
         # print('====')
         # print(dataa)
-        url = rf'https://student.wozaixiaoyuan.com/heat/save?batch=400001'
-        #headers = {"content-type": "application/x-www-form-urlencoded"}
+        url = rf'https://gw.wozaixiaoyuan.com/health/mobile/health/save?batch=400001'
+        headers = {"content-type": "application/json",'referer':'https://gw.wozaixiaoyuan.com/h5/mobile/health/index/health/detail?id=400001','JWSESSION': jwsession}
         r: requests.Response = requests.post(
-            url=url, headers={'JWSESSION': jwsession}, data=data)
+            url=url, headers=headers, json=data)
         data = r.json()
+        print(data)
         code = data['code']
         if code != 0:
             if code == -10:
@@ -104,6 +105,7 @@ def doHeat(jwsession: str, data: Document):
     except Exception as e:
         print(e.args)
         return {'code': 503, "msg": "网络请求异常"}
+ 
 
 
 def getSignList(jwsession: str):
@@ -159,4 +161,4 @@ def getOpenid(code: str):
         return {'code': 503, "msg": "网络请求异常"}
 
 
-# print(getOpenid(code='043ep30w3a8GDZ2o852w3UNxyX1ep30i'))
+
