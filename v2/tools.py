@@ -417,33 +417,42 @@ def long_work(email: str, bindid: str, templateid: str, workid: str):
         return
 
     data = template['data']
-    jwsession = bind['jwsession']
-    res = nettolls.doHeat(jwsession=jwsession, data=data)
+    
+    res = nettolls.getJwsession(bindid,bind['password'])
     code = res['code']
     if code != 0:
-        # 失败操作
-        if code == 505:
-            # bind status 2：失效
-            dbtools.update_bind_status(bindid=bindid, status=2)
-            # work status 2:暂停
-            dbtools.update_work_status(workid=workid, status=2)
-            # add log
-            docid = dbtools.add_work_log(email=email, bindid=bindid, workid=workid, templateid=templateid, time=time.strftime(
-                "%Y-%m-%d %H:%M:%S", time.localtime(time.time())), code=505, msg="定时任务执行失败【绑定失效】,已暂停运行")
-            mail.send_async_mail_prepare(
-                title='【谁在校园】您有任务失败啦，快去日志检查检查吧', content='', user_email=email)
-            return
+        if code == 405:
+            return {'code': 405, 'msg': res['msg']}
         else:
-            dbtools.update_work_status(workid=workid, status=2)
-            docid = dbtools.add_work_log(email=email, bindid=bindid, workid=workid, templateid=templateid, time=time.strftime(
-                "%Y-%m-%d %H:%M:%S", time.localtime(time.time())), code=code, msg="定时任务执行失败【"+res['msg']+"】,已暂停运行")
-            mail.send_async_mail_prepare(
-                title='【谁在校园】您有任务失败啦，快去日志检查检查吧', content='', user_email=email)
-            return
-    # 执行成功
-    docid = dbtools.add_work_log(email=email, bindid=bindid, workid=workid, templateid=templateid, time=time.strftime(
-        "%Y-%m-%d %H:%M:%S", time.localtime(time.time())), code=0, msg="定时任务执行成功")
-    return
+            return {'code': 503, 'msg': '网络请求失败'}
+    else:
+        jwsession = res['data']['jwsession']
+        res = nettolls.doHeat(jwsession=jwsession, data=data)
+        code = res['code']
+        if code != 0:
+            # 失败操作
+            if code == 505:
+                # bind status 2：失效
+                dbtools.update_bind_status(bindid=bindid, status=2)
+                # work status 2:暂停
+                dbtools.update_work_status(workid=workid, status=2)
+                # add log
+                docid = dbtools.add_work_log(email=email, bindid=bindid, workid=workid, templateid=templateid, time=time.strftime(
+                    "%Y-%m-%d %H:%M:%S", time.localtime(time.time())), code=505, msg="定时任务执行失败【绑定失效】,已暂停运行")
+                mail.send_async_mail_prepare(
+                    title='【谁在校园】您有任务失败啦，快去日志检查检查吧', content='', user_email=email)
+                return
+            else:
+                dbtools.update_work_status(workid=workid, status=2)
+                docid = dbtools.add_work_log(email=email, bindid=bindid, workid=workid, templateid=templateid, time=time.strftime(
+                    "%Y-%m-%d %H:%M:%S", time.localtime(time.time())), code=code, msg="定时任务执行失败【"+res['msg']+"】,已暂停运行")
+                mail.send_async_mail_prepare(
+                    title='【谁在校园】您有任务失败啦，快去日志检查检查吧', content='', user_email=email)
+                return
+        # 执行成功
+        docid = dbtools.add_work_log(email=email, bindid=bindid, workid=workid, templateid=templateid, time=time.strftime(
+            "%Y-%m-%d %H:%M:%S", time.localtime(time.time())), code=0, msg="定时任务执行成功")
+        return
 
 
 async def add_work(email: str, bindid: str, templateid: str, scheduler: BackgroundScheduler, starttime: str, endtime: str):
