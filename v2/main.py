@@ -336,7 +336,7 @@ async def customsign(bindid:str,city:str,longitude:str,country:str,district:str,
     return {'code':0,'msg':"自定义签到成功"}   
 #最新的自定义签到
 @app.get('/2/cutomsign_v2')
-async def customsign(bindid:str,city:str,longitude:str,country:str,district:str,township:str,latitude:str,province:str,nationcode:str,adccode:str,streetcode:str,citycode:str,towncode:str,street:str,auth = Depends(get_current_user_by_email)):
+async def customsign_v2(bindid:str,city:str,longitude:str,country:str,district:str,township:str,latitude:str,province:str,nationcode:str,adccode:str,streetcode:str,citycode:str,towncode:str,street:str,auth = Depends(get_current_user_by_email)):
     email = auth['email']
     res = await tools.custom_sign_v2(email=email,bindid=bindid,city=city,longitude=longitude,country=country,district=district,township=township,latitude=latitude,province=province,streetcode=streetcode,adccode=adccode,nationcode=nationcode,citycode=citycode,towncode=towncode,street=street)
     if res['code']!=0:
