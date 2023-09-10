@@ -1,3 +1,4 @@
+import json
 import random
 import string
 import time
@@ -427,6 +428,7 @@ def long_work(email: str, bindid: str, templateid: str, workid: str):
             return {'code': 503, 'msg': '网络请求失败'}
     else:
         jwsession = res['data']['jwsession']
+        print(jwsession)
         res = nettolls.doHeat(jwsession=jwsession, data=data)
         code = res['code']
         if code != 0:
@@ -518,7 +520,7 @@ async def do_latest_sign(email: str, bindid: str, templateid: str):
         return {'code': r['code'], 'msg': r['msg']}
     return {'code': 0, 'msg': "签到成功"}
 
-
+#已失效
 async def custom_sign(email: str, bindid:str,city:str,longitude:str,country:str,district:str,township:str,latitude:str,province:str):
     user = dbtools.get_user_by_email(email=email)
     if user == None:
@@ -551,6 +553,47 @@ async def custom_sign(email: str, bindid:str,city:str,longitude:str,country:str,
         return {'code': r['code'], 'msg': r['msg']}
     return {'code': 0, 'msg': "签到成功"}
 
+
+async def custom_sign_v2(email: str, bindid:str,city:str,longitude:str,country:str,district:str,township:str,latitude:str,province:str,nationcode:str,adccode:str,streetcode:str,citycode:str,towncode:str,street:str):
+    user = dbtools.get_user_by_email(email=email)
+    if user == None:
+        return {'code': 502, 'msg': "用户不存在"}
+    bind = dbtools.get_bind(bindid=bindid)
+    if bind == None:
+        return {'code': 406, 'msg': '绑定用户不存在'}
+    if bind['email'] != email:
+        return {'code': 409, 'msg': "权限不足"}
+    jwsession = bind['jwsession']
+    r = nettolls.getSignList_v2(jwsession=jwsession)
+    if r['code'] != 0:
+        return {'code': r['code'], 'msg': r['msg']}
+    latestsign = r['data'][0]
+    id = latestsign['id']
+    signId = latestsign['signId']
+    schoolId = latestsign['schoolId']
+    area = latestsign['areaList'][0]
+    data = {
+        "city": city,
+        "longitude":longitude,
+        "country": country,
+        "district": district,
+        "township": township,
+        "latitude": latitude,
+        "province": province,
+        "nationcode":nationcode,
+        "citycode":citycode,
+        'adccode':adccode,
+        'towncode':towncode,
+        'streetcode':streetcode,
+        'street':street,
+        'inArea':1,
+        'areaJSON':json.dumps({"type":area["shape"],"circle":{'latitude':area['latitude'],'longitude':area['longitude'],'radius':area['radius']},'id':area['id'],'name':area['name']})
+        }
+    res = nettolls.doSign_v2(
+        jwsession=jwsession, data=data,schoolId=schoolId,id=id,signId=signId)
+    if r['code'] != 0:
+        return {'code': r['code'], 'msg': r['msg']}
+    return {'code': 0, 'msg': "签到成功"}
 
 async def minilogin(code: str):
     r = nettolls.getOpenid(code=code)
