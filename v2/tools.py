@@ -571,7 +571,7 @@ async def custom_sign_v2(email: str, bindid:str,city:str,longitude:str,country:s
     id = latestsign['id']
     signId = latestsign['signId']
     schoolId = latestsign['schoolId']
-    area = latestsign['areaList'][0]
+    area = r['data'][1]['areaList'][0]
     data = {
         "city": city,
         "longitude":longitude,
