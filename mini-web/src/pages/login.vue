@@ -12,6 +12,7 @@
         </template>
         <v-card-actions>
           <v-btn @click="handleLogin">登录</v-btn>
+          <v-btn @click="handleResetPassword">忘记密码</v-btn>
         </v-card-actions>
     </v-card>
 </template>
@@ -51,8 +52,10 @@ const handleLogin = async () => {
     appStore.jwSession = jwSession
     router.push("/home")
   }
+}
 
-
+const handleResetPassword = () => {
+  router.push("/changePassword")
 }
 
 const getSchoolList = async () => {

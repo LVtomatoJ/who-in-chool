@@ -12,6 +12,18 @@ const loginAPI = (phoneNumber, password, schoolId) => {
 		.json();
 };
 
+const sendCodeAPI = (phoneNumber) => {
+	return useMyFetch(`/proxy/login/send_code?phone_number=${phoneNumber}`)
+		.get()
+		.json();
+};
+
+const resetPasswordAPI = (phoneNumber, password, code) => {
+	return useMyFetch(
+		`/proxy/reset_password?phone_number=${phoneNumber}&password=${password}&code=${code}`,
+	);
+};
+
 const getSignListAPI = (page, limit, jwSession) => {
 	return useMyFetch(
 		`/proxy/sign/list?page=${page}&limit=${limit}&jw_session=${jwSession}`,
@@ -28,4 +40,11 @@ const doSignAPI = (jwSession, id, signId, schoolID, latitude, longitude) => {
 		.json();
 };
 
-export { getSchoolListAPI, loginAPI, getSignListAPI, doSignAPI };
+export {
+	getSchoolListAPI,
+	loginAPI,
+	getSignListAPI,
+	doSignAPI,
+	sendCodeAPI,
+	resetPasswordAPI,
+};
