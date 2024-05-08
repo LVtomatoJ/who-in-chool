@@ -44,7 +44,7 @@ def send_code(phone_number: str):
 @router.get("/reset_password", response_model=SuccessResp)
 def reset_password(phone_number: str, password: str, code: str):
     # 重制需要进行两次
-    proxy_reset_password(phone_number, encrypt_password(phone_number, password), code)
+    # proxy_reset_password(phone_number, encrypt_password(phone_number, password), code)
     proxy_reset_password(phone_number, encrypt_password(phone_number, password), code)
     return SuccessResp(message="重置成功")
 
