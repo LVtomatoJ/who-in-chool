@@ -2,10 +2,10 @@ import json
 from fastapi import APIRouter
 
 from app.routers.schemas.proxy import (
-    DoSignResp,
     LoginResp,
     SchoolListResp,
     SignListResp,
+    SuccessResp,
 )
 from app.routers.utils.proxy import (
     encrypt_password,
@@ -13,6 +13,8 @@ from app.routers.utils.proxy import (
     proxy_get_school_list,
     proxy_get_sign_list,
     proxy_login,
+    proxy_reset_password,
+    proxy_send_code,
 )
 
 
@@ -33,13 +35,25 @@ def school_login(phone_number: str, password: str, school_id: str):
     return LoginResp(jw_session=jw_session)
 
 
+@router.get("/login/send_code", response_model=SuccessResp)
+def send_code(phone_number: str):
+    proxy_send_code(phone_number)
+    return SuccessResp(message="发送成功")
+
+
+@router.get("/reset_password", response_model=SuccessResp)
+def reset_password(phone_number: str, password: str, code: str):
+    proxy_reset_password(phone_number, encrypt_password(phone_number, password), code)
+    return SuccessResp(message="重置成功")
+
+
 @router.get("/sign/list", response_model=SignListResp)
 def get_sign_list(jw_session: str, page: int, limit: int = 10):
     sign_list = proxy_get_sign_list(jw_session, page, limit)
     return SignListResp(data=sign_list)
 
 
-@router.get("/sign/do", response_model=DoSignResp)
+@router.get("/sign/do", response_model=SuccessResp)
 def do_sign(
     jw_session: str,
     id: str,
@@ -79,4 +93,4 @@ def do_sign(
     proxy_do_sign(
         jw_session=jw_session, data=data, id=id, signId=sign_id, schoolId=school_id
     )
-    return DoSignResp(message="签到成功")
+    return SuccessResp(message="签到成功")

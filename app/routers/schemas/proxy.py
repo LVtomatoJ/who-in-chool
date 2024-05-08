@@ -36,5 +36,5 @@ class SignListResp(BaseModel):
     data: list[SignInfo]
 
 
-class DoSignResp(BaseModel):
+class SuccessResp(BaseModel):
     message: str

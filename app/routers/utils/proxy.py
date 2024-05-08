@@ -68,6 +68,32 @@ def proxy_login(phone_number: str, password: str, school_id: str) -> str:
         raise HTTPException(status_code=500, detail="服务器网络异常")
 
 
+def proxy_send_code(phone_number: str):
+    try:
+        url = f"https://gw.wozaixiaoyuan.com/basicinfo/mobile/login/getCode?phone={phone_number}"
+        res = requests.get(url)
+        res_json = res.json()
+        if res_json["code"] != 0:
+            raise HTTPException(status_code=400, detail=res_json["message"])
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=500, detail="服务器网络异常")
+
+
+def proxy_reset_password(phone_number: str, password: str, code: str):
+    try:
+        url = f"https://gw.wozaixiaoyuan.com/basicinfo/mobile/login/changePassword?phone={phone_number}&code={code}&password={password}"
+        res = requests.get(url=url)
+        res_json = res.json()
+        if res_json["code"] != 0:
+            raise HTTPException(status_code=400, detail=res_json["message"])
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=500, detail="服务器网络异常")
+
+
 def proxy_get_sign_list(jw_session: str, page: int, limit=10):
     try:
         url = f"https://gw.wozaixiaoyuan.com/sign/mobile/receive/getMySignLogs?page={page}&size={limit}"
