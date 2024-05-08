@@ -16,16 +16,16 @@ from app.routers.utils.proxy import (
 )
 
 
-router = APIRouter()
+router = APIRouter(prefix="/proxy", tags=["代理"])
 
 
-@router.get("/proxy/get_school_list", response_model=SchoolListResp)
+@router.get("/get_school_list", response_model=SchoolListResp)
 def get_school_list():
     school_list = proxy_get_school_list()
     return SchoolListResp(data=school_list)
 
 
-@router.get("/proxy/login", response_model=LoginResp)
+@router.get("/login", response_model=LoginResp)
 def school_login(phone_number: str, password: str, school_id: str):
     jw_session = proxy_login(
         phone_number, encrypt_password(phone_number, password), school_id
@@ -33,13 +33,13 @@ def school_login(phone_number: str, password: str, school_id: str):
     return LoginResp(jw_session=jw_session)
 
 
-@router.get("/proxy/sign/list", response_model=SignListResp)
+@router.get("/sign/list", response_model=SignListResp)
 def get_sign_list(jw_session: str, page: int, limit: int = 10):
     sign_list = proxy_get_sign_list(jw_session, page, limit)
     return SignListResp(data=sign_list)
 
 
-@router.get("/proxy/sign/do", response_model=DoSignResp)
+@router.get("/sign/do", response_model=DoSignResp)
 def do_sign(
     jw_session: str,
     id: str,

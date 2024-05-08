@@ -5,10 +5,16 @@
             <v-list-item >
                 <v-list-item-content>
                     <v-list-item-title>{{ item.signTitle }}</v-list-item-title>
-                    <v-list-item-subtitle>{{ item.signContext }}</v-list-item-subtitle>
+                    <v-list-item-subtitle>
+                        <!-- 时间戳转string -->
+                        开始时间：{{ new Date(item.date).toLocaleString() }} 
+                        <br>结束时间： {{ new Date(item.end).toLocaleString() }}
+                       
+                    </v-list-item-subtitle>
                 </v-list-item-content>
                 <template v-slot:append>
-                        <v-btn @click="doSign(item.id)">签到</v-btn>
+                        <v-btn v-if="item.signStatus != 2" :loading="item.loading" @click="doSign(item.id)">校区暴力签到</v-btn>
+                        <v-btn variant="text" v-else>已签到</v-btn>
                 </template>
             </v-list-item>
         </template>
@@ -35,6 +41,14 @@ const page = ref(1)
 
 const haveMore = ref(true)
 
+const scrollToTop = () => {
+    // 平滑滚动页面到顶部
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
 const getSignList = async () => {
     const { data, error } = await getSignListAPI(page.value, 10, appStore.jwSession);
     if (error.value != null) {
@@ -53,12 +67,30 @@ const getSignList = async () => {
 
 const doSign = async (id) => {
     const signInfo = signList.value.find(item => item.id === id)
-    console.log(signInfo)
+    signList.value.map(item => {
+        if (item.id === id) {
+            item.loading = true
+        }
+    })
     const { data, error } = await doSignAPI(appStore.jwSession, id, signInfo.signId, signInfo.schoolId, signInfo.latitude, signInfo.longitude);
     if (error.value != null) {
         console.log('失败啦', error.value.detail)
+        scrollToTop()
         errorMessage.value = error.value.detail
+        signList.value.map(item => {
+            if (item.id === id) {
+                item.loading = false
+            }
+        })
+        setTimeout(() => {
+            errorMessage.value = ''
+        }, 3000);
     } else {
+        signList.value.map(item => {
+            if (item.id === id) {
+                item.loading = false
+            }
+        })
         errorMessage.value = ''
     }
 }
