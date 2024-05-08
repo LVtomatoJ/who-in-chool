@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    SQLModel.metadata.create_all(engine)
+    # SQLModel.metadata.create_all(engine)
     yield
 
 

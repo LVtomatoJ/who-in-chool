@@ -6,7 +6,7 @@ authors = ["lvtomatoj <lvtomatoj@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
 sqlmodel = "^0.0.16"
 fastapi = "^0.110.1"
 python-jose = "^3.3.0"

@@ -2,3 +2,9 @@
 cd v1
 
 python3 -m uvicorn main:app --reload 
+
+
+docker build -t who-in-school ./
+
+docker run -d --name who-in-school -p 80:80 who-in-school
+
