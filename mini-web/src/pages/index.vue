@@ -11,7 +11,7 @@
     <template v-slot:append>
       <div @click="goLoginPage">
         立即登录
-          <v-icon @click="goLoginPage" icon="mdi-chevron-right"></v-icon>
+          <v-icon icon="mdi-chevron-right"></v-icon>
       </div>
         </template>
     </v-card>
@@ -59,7 +59,7 @@
         </v-list>
       </template>
     </v-card>
-      <v-btn block>立即登录体验</v-btn>
+      <v-btn  @click="goLoginPage" block>立即体验</v-btn>
 </template>
 
 <script setup>
