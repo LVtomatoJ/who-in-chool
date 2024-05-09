@@ -34,7 +34,10 @@ class SignInfo(BaseModel):
     end: int  # 结束时间
     signContext: str
     signStatus: int
-    areaList: list[AreaInfo]
+    areaList: list[AreaInfo] = None  # 如果有多个校区位置就在这里
+    # 如果是单个校区位置信息在这里
+    latitude: str = None
+    longitude: str = None
     schoolId: str
 
 
