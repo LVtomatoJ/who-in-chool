@@ -7,6 +7,7 @@
               </template>
       </v-list-item>
     </v-list>
+    <UserFooter  page-value='home'/>
 </template>
 
 <script setup>
@@ -32,3 +33,8 @@ const goSignListPage = () => {
 }
 
 </script>
+
+<route lang="yaml">
+    meta:
+      layout: home
+</route>

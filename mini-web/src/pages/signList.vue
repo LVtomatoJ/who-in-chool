@@ -51,7 +51,7 @@
                     </v-list-item-content>
                     <template v-slot:append>
                             <v-btn v-if="item.signStatus != 2"  @click="handleShowLocation(item.id)">校区暴力签到</v-btn>
-                            <v-btn variant="text" v-else @click="handleShowLocation(item.id)">已签到</v-btn>
+                            <v-btn variant="text" v-else ">已签到</v-btn>
                     </template>
                 </v-list-item>
             </template>
