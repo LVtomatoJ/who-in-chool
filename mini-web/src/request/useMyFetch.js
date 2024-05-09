@@ -1,6 +1,6 @@
 import { createFetch } from "@vueuse/core";
 const useMyFetch = createFetch({
-	baseUrl: "http://1.15.172.238:8000/api/v1",
+	baseUrl: import.meta.env.VITE_API_URL,
 	combination: "overwrite",
 	options: {
 		onFetchError(ctx) {

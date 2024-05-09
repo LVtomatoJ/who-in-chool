@@ -8,3 +8,4 @@ docker build -t who-in-school ./
 
 docker run -d --name who-in-school -p 8001:8001 -e PORT="8001" who-in-school
 
+uvicorn app.main:app --reload --host 0.0.0.0
