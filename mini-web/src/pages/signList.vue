@@ -72,9 +72,14 @@ const doSign = async (id) => {
             item.loading = true
         }
     })
-    const firstArea = signInfo.areaList[0]
-    const latitude = firstArea.latitude
-    const longitude = firstArea.longitude
+    if (signInfo.areaList) {
+        const firstArea = signInfo.areaList[0]
+        const latitude = firstArea.latitude
+        const longitude = firstArea.longitude
+    } else {
+    }
+    const latitude = signInfo.latitude || signInfo.areaList[0].latitude;
+    const longitude = signInfo.longitude || signInfo.areaList[0].longitude;
     const { data, error } = await doSignAPI(appStore.jwSession, id, signInfo.signId, signInfo.schoolId, latitude, longitude);
     if (error.value != null) {
         console.log('失败啦', error.value.detail)
