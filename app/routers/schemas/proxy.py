@@ -30,7 +30,7 @@ class SignInfo(BaseModel):
     createCollege: str
     teacher: str
     signMode: int  # 1是校区签到 2是定位签到
-    date: int  # 开始时间
+    start: int  # 开始时间
     end: int  # 结束时间
     signContext: str
     signStatus: int
