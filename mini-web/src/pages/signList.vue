@@ -12,7 +12,7 @@
             {{pointLocation.latlng.lat}} <br /> 
             {{pointLocation.latlng.lng}} <br />
             签到地点：<br />
-            {{pointLocation.poiaddress}}
+            {{pointLocation.poiaddress}} <br />
             {{pointLocation.poiname}}
             
         </template>
