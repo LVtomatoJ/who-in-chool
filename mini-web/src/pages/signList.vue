@@ -7,7 +7,7 @@
                     <v-list-item-title>{{ item.signTitle }}</v-list-item-title>
                     <v-list-item-subtitle>
                         <!-- 时间戳转string -->
-                        开始时间：{{ new Date(item.date).toLocaleString() }} 
+                        开始时间：{{ new Date(item.start).toLocaleString() }} 
                         <br>结束时间： {{ new Date(item.end).toLocaleString() }}
                        
                     </v-list-item-subtitle>
