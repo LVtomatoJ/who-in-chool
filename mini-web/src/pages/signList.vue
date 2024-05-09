@@ -72,7 +72,10 @@ const doSign = async (id) => {
             item.loading = true
         }
     })
-    const { data, error } = await doSignAPI(appStore.jwSession, id, signInfo.signId, signInfo.schoolId, signInfo.latitude, signInfo.longitude);
+    const firstArea = signInfo.areaList[0]
+    const latitude = firstArea.latitude
+    const longitude = firstArea.longitude
+    const { data, error } = await doSignAPI(appStore.jwSession, id, signInfo.signId, signInfo.schoolId, latitude, longitude);
     if (error.value != null) {
         console.log('失败啦', error.value.detail)
         scrollToTop()

@@ -16,6 +16,13 @@ class LoginResp(BaseModel):
     jw_session: str
 
 
+class AreaInfo(BaseModel):
+    id: str
+    latitude: str
+    longitude: str
+    name: str
+
+
 class SignInfo(BaseModel):
     id: str
     signId: str
@@ -27,8 +34,7 @@ class SignInfo(BaseModel):
     end: int  # 结束时间
     signContext: str
     signStatus: int
-    latitude: str
-    longitude: str
+    areaList: list[AreaInfo]
     schoolId: str
 
 
