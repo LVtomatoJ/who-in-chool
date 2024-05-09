@@ -1,14 +1,12 @@
 <template>
-    <v-card
-    class="mx-auto"
-    max-width="300"
-  >
-    <v-list>
-        <v-list-item @click="goSignListPage">
-            签到消息
-        </v-list-item>
+    <v-list :items="functionList">
+      <v-list-subheader>功能</v-list-subheader>
+      <v-list-item title='签到' @click="goSignListPage">
+              <template v-slot:prepend>
+                <v-icon icon="mdi-clock"></v-icon>
+              </template>
+      </v-list-item>
     </v-list>
-  </v-card>
 </template>
 
 <script setup>
@@ -20,8 +18,17 @@ const router = useRouter();
 
 const appStore = useAppStore();
 
+const functionList = ref([
+          {
+          title: '签到',
+          value: 1,
+          props: {
+            prependIcon: 'mdi-clock',
+          }}
+        ])
+
 const goSignListPage = () => {
-    router.push('/signList')
+  router.push('/signList')
 }
 
 </script>
