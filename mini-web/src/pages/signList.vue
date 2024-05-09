@@ -51,7 +51,7 @@
                     </v-list-item-content>
                     <template v-slot:append>
                             <v-btn v-if="item.signStatus != 2"  @click="handleShowLocation(item.id)">校区暴力签到</v-btn>
-                            <v-btn variant="text" v-else ">已签到</v-btn>
+                            <v-btn variant="text" v-else>已签到</v-btn>
                     </template>
                 </v-list-item>
             </template>
@@ -61,114 +61,132 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed } from "vue";
 
-import { useRouter } from 'vue-router'
-import { useAppStore } from '@/stores/app'
+import { useRouter } from "vue-router";
+import { useAppStore } from "@/stores/app";
 
-import { getSignListAPI, doSignAPI } from '@/request/api/proxy'
+import { getSignListAPI, doSignAPI } from "@/request/api/proxy";
 
+const tencentMapKey = import.meta.env.VITE_TENCENT_MAP_KEY;
 
-const tencentMapKey = import.meta.env.VITE_TENCENT_MAP_KEY
+const errorMessage = ref("");
+const successMessage = ref("");
 
+const router = useRouter();
+const appStore = useAppStore();
 
-const errorMessage = ref('')
-const successMessage = ref('')
+const signList = ref([]);
+const page = ref(1);
 
-const router = useRouter()
-const appStore = useAppStore()
+const haveMore = ref(true);
 
-const signList = ref([])
-const page = ref(1)
+const showLocation = ref(false);
+const doSigndialog = ref(false);
 
-const haveMore = ref(true)
-
-const showLocation = ref(false)
-const doSigndialog = ref(false)
-
-const latitude = ref(0)
-const longitude = ref(0)
+const latitude = ref(0);
+const longitude = ref(0);
 
 const pointLocation = ref({
-    cityname:'',
-    latlng:{
-        lat: 0,
-        lng: 0
-    },
-    poiaddress:'',
-    poiname:''
-})
+	cityname: "",
+	latlng: {
+		lat: 0,
+		lng: 0,
+	},
+	poiaddress: "",
+	poiname: "",
+});
 
 const handleShowLocation = (id) => {
-    selectId.value = id
-    showLocation.value = true
-}
+	selectId.value = id;
+	showLocation.value = true;
+};
 
 const scrollToTop = () => {
-    // 平滑滚动页面到顶部
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-}
+	// 平滑滚动页面到顶部
+	window.scrollTo({
+		top: 0,
+		behavior: "smooth",
+	});
+};
 
-const selectId = ref(0)
+const selectId = ref(0);
 
 const getSignList = async () => {
-    const { data, error } = await getSignListAPI(page.value, 10, appStore.jwSession);
-    if (error.value != null) {
-        console.log('失败啦', error.value.detail)
-        errorMessage.value = error.value.detail
-    } else {
-        errorMessage.value = ''
-        signList.value = signList.value.concat(data.value.data)
-        if (data.value.data.length < 10) {
-            haveMore.value = false
-        }
-        page.value++
-    }
-}
+	const { data, error } = await getSignListAPI(
+		page.value,
+		10,
+		appStore.jwSession,
+	);
+	if (error.value != null) {
+		console.log("失败啦", error.value.detail);
+		errorMessage.value = error.value.detail;
+	} else {
+		errorMessage.value = "";
+		console.log("1");
+		console.log(data.value);
+		console.log("1");
+		signList.value = signList.value.concat(data.value.data);
+		console.log("2");
+		if (data.value.data.length < 10) {
+			console.log("3");
+			haveMore.value = false;
+		}
+		console.log("4");
+		page.value++;
+		console.log("5");
+	}
+};
 
-const signLoading = ref(false)
+const signLoading = ref(false);
 
 const doSign = async () => {
-    signLoading.value = true
-    const signInfo = signList.value.find(item => item.id === selectId.value)
-    const { data, error } = await doSignAPI(appStore.jwSession, selectId.value, signInfo.signId, signInfo.schoolId, pointLocation.value.latlng.lat, pointLocation.value.latlng.lng);
-    doSigndialog.value = false
-    signLoading.value=false
-    if (error.value != null) {
-
-        console.log('失败啦', error.value.detail)
-        scrollToTop()
-        errorMessage.value = error.value.detail
-        setTimeout(() => {
-            errorMessage.value = ''
-        }, 3000);
-    } else {
-        successMessage.value = '签到成功'
-        setTimeout(() => {
-            successMessage.value = ''
-        }, 3000);
-    }
-}
+	signLoading.value = true;
+	const signInfo = signList.value.find((item) => item.id === selectId.value);
+	const { data, error } = await doSignAPI(
+		appStore.jwSession,
+		selectId.value,
+		signInfo.signId,
+		signInfo.schoolId,
+		pointLocation.value.latlng.lat,
+		pointLocation.value.latlng.lng,
+	);
+	doSigndialog.value = false;
+	signLoading.value = false;
+	if (error.value != null) {
+		console.log("失败啦", error.value.detail);
+		scrollToTop();
+		errorMessage.value = error.value.detail;
+		setTimeout(() => {
+			errorMessage.value = "";
+		}, 3000);
+	} else {
+		successMessage.value = "签到成功";
+		setTimeout(() => {
+			successMessage.value = "";
+		}, 3000);
+	}
+};
 
 onMounted(() => {
-    getSignList()
-})
+	getSignList();
+});
 
-
-window.addEventListener('message', (event) => {
-        // 接收位置信息，用户选择确认位置点后选点组件会触发该事件，回传用户的位置信息
-        const loc = event.data;
-        if (loc && loc.module === 'locationPicker') {//防止其他应用也会向该页面post信息，需判断module是否为'locationPicker'
-          console.log('location', loc);
-          pointLocation.value = loc
-        //   doSign(loc.id)
-          showLocation.value=false
-          doSigndialog.value = true
-        }
-    }, false);
-
+window.addEventListener(
+	"message",
+	(event) => {
+		// 接收位置信息，用户选择确认位置点后选点组件会触发该事件，回传用户的位置信息
+		const loc = event.data;
+		if (loc && loc.module === "locationPicker") {
+			//防止其他应用也会向该页面post信息，需判断module是否为'locationPicker'
+			console.log("location", loc);
+			pointLocation.value = loc;
+			//   doSign(loc.id)
+			showLocation.value = false;
+			doSigndialog.value = true;
+		}
+	},
+	false,
+);
 </script>
 
