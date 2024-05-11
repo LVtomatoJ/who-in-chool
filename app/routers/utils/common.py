@@ -58,6 +58,19 @@ def get_user_by_user_id(
     return user
 
 
+def get_user_by_phone_number(
+    phone_number: str,
+    session: Session,
+) -> DBUser | None:
+    """
+    根据 open_id 获取用户
+    """
+    statement = select(DBUser).where(DBUser.phone_number == phone_number)
+    results = session.exec(statement)
+    user: DBUser | None = results.first()
+    return user
+
+
 def create_user_by_open_id(open_id: str, session: Session):
     """
     根据 open_id 创建用户

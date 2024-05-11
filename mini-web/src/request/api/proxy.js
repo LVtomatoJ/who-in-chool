@@ -24,17 +24,15 @@ const resetPasswordAPI = (phoneNumber, password, code) => {
 	);
 };
 
-const getSignListAPI = (page, limit, jwSession) => {
-	return useMyFetch(
-		`/proxy/sign/list?page=${page}&limit=${limit}&jw_session=${jwSession}`,
-	)
+const getSignListAPI = (page, limit) => {
+	return useMyFetch(`/proxy/sign/list?page=${page}&limit=${limit}`)
 		.get()
 		.json();
 };
 
-const doSignAPI = (jwSession, id, signId, schoolID, latitude, longitude) => {
+const doSignAPI = (id, signId, schoolID, latitude, longitude) => {
 	return useMyFetch(
-		`/proxy/sign/do?jw_session=${jwSession}&id=${id}&sign_id=${signId}&school_id=${schoolID}&latitude=${latitude}&longitude=${longitude}`,
+		`/proxy/sign/do?id=${id}&sign_id=${signId}&school_id=${schoolID}&latitude=${latitude}&longitude=${longitude}`,
 	)
 		.get()
 		.json();

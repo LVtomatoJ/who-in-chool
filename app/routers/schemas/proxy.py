@@ -13,7 +13,7 @@ class SchoolListResp(BaseModel):
 
 
 class LoginResp(BaseModel):
-    jw_session: str
+    token: str
 
 
 class AreaInfo(BaseModel):
@@ -43,7 +43,3 @@ class SignInfo(BaseModel):
 
 class SignListResp(BaseModel):
     data: list[SignInfo]
-
-
-class SuccessResp(BaseModel):
-    message: str

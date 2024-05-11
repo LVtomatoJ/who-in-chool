@@ -48,8 +48,8 @@ const handleLogin = async () => {
     errorMessage.value = error.value.detail
   } else {
     errorMessage.value = ''
-    const jwSession = data.value.jw_session
-    appStore.jwSession = jwSession
+    const token = data.value.token
+    appStore.token = token
     router.push("/home")
   }
 }

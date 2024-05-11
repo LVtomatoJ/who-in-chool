@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from sqlmodel import SQLModel
 
-from app.routers import common, proxy, user
+from app.routers import common, proxy, user, message_board
 from app.database import engine
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    # SQLModel.metadata.create_all(engine)
+    SQLModel.metadata.create_all(engine)
     yield
 
 
@@ -31,6 +31,7 @@ app.add_middleware(
 app.include_router(common.router)
 app.include_router(user.router)
 app.include_router(proxy.router)
+app.include_router(message_board.router)
 
 
 @app.get("/")

@@ -18,10 +18,10 @@ router.beforeEach(async (to, from) => {
 	const appStore = useAppStore();
 	console.log("to");
 	console.log(to);
-	console.log(appStore.jwSession);
+	console.log(appStore.token);
 	if (
 		// make sure the user is authenticated
-		appStore.jwSession === "" &&
+		appStore.token === "" &&
 		// ❗️ Avoid an infinite redirect
 		to.path !== "/login" &&
 		to.path !== "/"

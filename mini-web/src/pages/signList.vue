@@ -9,11 +9,11 @@
       >
         <template v-slot:text>
             签到位置：<br />
-            {{pointLocation.latlng.lat}} <br /> 
-            {{pointLocation.latlng.lng}} <br />
+            {{ pointLocation.latlng.lat }} <br /> 
+            {{ pointLocation.latlng.lng }} <br />
             签到地点：<br />
-            {{pointLocation.poiaddress}} <br />
-            {{pointLocation.poiname}}
+            {{ pointLocation.poiaddress }} <br />
+            {{ pointLocation.poiname }}
             
         </template>
         <template v-slot:actions>
@@ -116,7 +116,6 @@ const getSignList = async () => {
 	const { data, error } = await getSignListAPI(
 		page.value,
 		10,
-		appStore.jwSession,
 	);
 	if (error.value != null) {
 		console.log("失败啦", error.value.detail);
@@ -144,7 +143,6 @@ const doSign = async () => {
 	signLoading.value = true;
 	const signInfo = signList.value.find((item) => item.id === selectId.value);
 	const { data, error } = await doSignAPI(
-		appStore.jwSession,
 		selectId.value,
 		signInfo.signId,
 		signInfo.schoolId,

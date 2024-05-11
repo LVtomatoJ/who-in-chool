@@ -13,18 +13,17 @@
 </v-bottom-navigation>
 </template>
 <script setup>
-// import {onMounted,ref} from 'vue'
 const props = defineProps(['pageValue'])
-import {useRouter} from 'vue-router'
+import { useRouter } from 'vue-router'
 const router = useRouter();
 
-const handleNavigation = (page)=>{
-    console.log('page')
-    console.log(page)
-    if (page==='home') {
-        router.push('/home')
-    }else if (page==='message') {
-        router.push('/home/message')
-    }
+const handleNavigation = (page) => {
+  console.log('page')
+  console.log(page)
+  if (page === 'home') {
+    router.push('/home')
+  } else if (page === 'message') {
+    router.push('/home/message')
+  }
 }
 </script>

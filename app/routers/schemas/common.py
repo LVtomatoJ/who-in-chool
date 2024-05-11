@@ -16,3 +16,7 @@ class UserRead(BaseModel):
 
 class WxLoginReq(BaseModel):
     code: str
+
+
+class SuccessResp(BaseModel):
+    message: str

@@ -43,7 +43,9 @@ def login(
     user: DBUser | None = get_user_by_user_id(session=session, user_id=int(user_id))
     if not user:
         raise HTTPException(status_code=403, detail="用户不存在")
-    access_token = create_access_token(data={"user_id": user_id})
+    access_token = create_access_token(
+        data={"user_id": user_id, "jw_session": "demo", "school_id": "4"}
+    )
     return Token(access_token=access_token)
 
 
