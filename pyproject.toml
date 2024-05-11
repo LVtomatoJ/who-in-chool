@@ -19,6 +19,7 @@ phonenumbers = "^8.13.34"
 wechatpy = "^1.8.18"
 cryptography = "^42.0.7"
 pycryptodome = "^3.20.0"
+pymysql = "^1.1.0"
 
 
 [build-system]
