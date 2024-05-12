@@ -1,5 +1,5 @@
 <template>
-    <v-card title="谁在校园-登录" style="padding: 20px;margin: 30px;">
+    <v-card title="你在校园-登录" style="padding: 20px;margin: 30px;">
          <template v-slot:text>
           <v-combobox
             label="学校"

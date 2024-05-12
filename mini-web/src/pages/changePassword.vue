@@ -1,5 +1,5 @@
 <template>
-    <v-card title="谁在校园-忘记密码" style="padding: 20px;margin: 30px;">
+    <v-card title="你在校园-忘记密码" style="padding: 20px;margin: 30px;">
          <template v-slot:text>
           <v-text-field v-model="phoneNumber" label="手机号" variant="underlined"></v-text-field>
           <v-text-field v-model="code" label="验证码" variant="underlined">

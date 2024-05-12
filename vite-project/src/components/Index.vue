@@ -7,7 +7,7 @@
                 <!-- <el-row align="middle"> -->
                 <!-- <div class="flex-grow" /> -->
                 <!-- <el-col :span="3"> -->
-                <el-button type="primary" text>谁在校园</el-button>
+                <el-button type="primary" text>你在校园</el-button>
                 <!-- </el-col> -->
                 <!-- <div class="flex-grow" /> -->
                 <!-- <el-col :span="3">

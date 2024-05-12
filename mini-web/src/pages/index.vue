@@ -6,7 +6,7 @@
      
         subtitle="剔除臃肿 极简便利"
         text="去除所有不必要的功能 即签即用！"
-        title="谁在校园"
+        title="你在校园"
       >
     <template v-slot:append>
       <div @click="goLoginPage">
@@ -22,7 +22,6 @@
         title="教程"
       >
       <template #text>
-        本站不存在用户系统！或者说可以完全忽视
         <!-- 下面做一步一步的教程 -->
         <v-list lines="two">
 
@@ -32,7 +31,7 @@
                 1. 登录
               </v-list-item-title>
               <v-list-item-subtitle>
-                输入你的手机号和密码，然后点击登录（失败请在小程序设置中修改
+                输入你的手机号和密码，然后点击登录 密码错误请在忘记密码里修改哦
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -52,7 +51,17 @@
                 3. 进行签到
               </v-list-item-title>
               <v-list-item-subtitle>
-                目前图省事会直接签到到学校坐标（缺失多个参数)后续更新地图选点签到
+                地图选点签到！我说在哪就在哪！
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>
+                4. 反馈
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                有任何问题可以在留言里留下问题哦（留言板块是本校可见！
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
