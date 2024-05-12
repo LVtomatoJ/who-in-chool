@@ -2,13 +2,15 @@
 <v-bottom-navigation @update:modelValue='handleNavigation' :model-value='pageValue' :elevation="7" mode="shift">
   <v-btn value="home">
     <v-icon>mdi-home</v-icon>
-
     <span>首页</span>
   </v-btn>
-
   <v-btn value="message">
     <v-icon>mdi-message</v-icon>
     <span>留言</span>
+  </v-btn>
+   <v-btn value="account">
+    <v-icon>mdi-account-edit</v-icon>
+    <span>用户</span>
   </v-btn>
 </v-bottom-navigation>
 </template>
@@ -24,6 +26,8 @@ const handleNavigation = (page) => {
     router.push('/home')
   } else if (page === 'message') {
     router.push('/home/message')
+  }else if(page === 'account'){
+    router.push('/home/account')
   }
 }
 </script>

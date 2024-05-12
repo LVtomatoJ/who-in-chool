@@ -12,6 +12,7 @@ class TokenData(BaseModel):
 
 class UserRead(BaseModel):
     id: int
+    nick_name: str|None
 
 
 class WxLoginReq(BaseModel):
