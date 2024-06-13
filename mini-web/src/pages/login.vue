@@ -59,9 +59,17 @@ const handleResetPassword = () => {
 }
 
 const getSchoolList = async () => {
-  const { data } = await getSchoolListAPI();
-  console.log(data.value)
-  schoolList.value = data.value.data
+  const { data, error } = await getSchoolListAPI();
+  console.log('school list')
+  console.log(data)
+  console.log(error)
+  if (error.value != null) {
+    console.log('失败啦', error.value)
+    errorMessage.value = error.value
+  } else {
+    errorMessage.value = ''
+    schoolList.value = data.value.data
+  }
 }
 
 onMounted(() => {

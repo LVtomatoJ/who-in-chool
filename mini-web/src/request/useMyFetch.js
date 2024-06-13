@@ -12,10 +12,15 @@ const useMyFetch = createFetch({
 			return { options };
 		},
 		onFetchError(ctx) {
+			console.log('error')
+			console.log(ctx)
+
 			if (ctx.data) {
 				ctx.error = ctx.data;
-				return ctx;
-			}
+				return ctx
+			}	
+			ctx.error = ctx.error.message;
+			return ctx;
 		},
 	},
 });
