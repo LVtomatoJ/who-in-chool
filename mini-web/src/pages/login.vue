@@ -42,6 +42,10 @@ const selectSchool = computed(() => {
 const errorMessage = ref('')
 
 const handleLogin = async () => {
+  if (selectSchool.value == null) {
+    errorMessage.value = '请选择学校'
+    return
+  }
   const { data, error } = await loginAPI(phoneNumber.value, password.value, selectSchool.value.id)
   if (error.value != null) {
     console.log('失败啦', error.value.detail)
